@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "version": 2,
+  "title": "Workspace internal dependencies executor",
+  "description": "Scan internal workspace dependencies in the workspace.",
+  "type": "object",
+  "properties": {
+    "write": {
+      "type": "boolean",
+      "description": "Remove unused workspace internal dependencies and sync the workspace.",
+      "default": false
+    }
+  },
+  "required": []
+}

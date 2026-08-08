@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "$id": "NxWorkspaceToolsFeatureLibsGenerator",
+  "title": "Generate feature libraries",
+  "description": "Generate a feature libraries scaffold for the workspace.",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "The name of the feature libraries to generate.",
+      "$default": {
+        "$source": "argv",
+        "index": 0
+      },
+      "x-prompt": "What name would you like to use?"
+    }
+  },
+  "required": ["name"]
+}

@@ -1,0 +1,58 @@
+{
+  "name": "@eweap/nx-workspace-tools",
+  "version": "0.0.1",
+  "type": "commonjs",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "!**/*.tsbuildinfo",
+    "executors.json",
+    "generators.json"
+  ],
+  "nx": {
+    "name": "nx-workspace-tools",
+    "targets": {
+      "build": {
+        "executor": "@nx/js:tsc",
+        "outputs": [
+          "{options.outputPath}"
+        ],
+        "options": {
+          "outputPath": "packages/nx-workspace-tools/dist",
+          "main": "packages/nx-workspace-tools/src/index.ts",
+          "tsConfig": "packages/nx-workspace-tools/tsconfig.lib.json",
+          "rootDir": "packages/nx-workspace-tools/src",
+          "generatePackageJson": false,
+          "assets": [
+            {
+              "input": "./packages/nx-workspace-tools/src",
+              "glob": "**/!(*.ts)",
+              "output": "."
+            },
+            {
+              "input": "./packages/nx-workspace-tools/src",
+              "glob": "**/*.d.ts",
+              "output": "."
+            }
+          ]
+        }
+      }
+    }
+  },
+  "dependencies": {
+    "@nx/devkit": "23.1.1",
+    "tslib": "^2.3.0"
+  },
+  "executors": "./executors.json",
+  "generators": "./generators.json"
+}

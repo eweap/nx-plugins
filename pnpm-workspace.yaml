@@ -3,4 +3,7 @@ packages:
 
 autoInstallPeers: true
 allowBuilds:
+  esbuild: false
   nx: true
+  unrs-resolver: false
+  '@swc/core': false

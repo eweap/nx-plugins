@@ -1,0 +1,9 @@
+{
+  "generators": {
+    "feature-libs": {
+      "factory": "./dist/generators/feature-libs/generator",
+      "schema": "./dist/generators/feature-libs/schema.json",
+      "description": "Generate a feature library scaffold."
+    }
+  }
+}
