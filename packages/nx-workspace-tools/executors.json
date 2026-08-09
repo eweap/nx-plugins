@@ -1,7 +1,7 @@
 {
   "executors": {
     "workspace-internal-deps": {
-      "implementation": "./dist/executors/workspace-internal-deps/executor",
+      "implementation": "./dist/executors/workspace-internal-deps/workspace-internal-deps",
       "schema": "./dist/executors/workspace-internal-deps/schema.json",
       "description": "Scan internal workspace dependencies in the workspace."
     }

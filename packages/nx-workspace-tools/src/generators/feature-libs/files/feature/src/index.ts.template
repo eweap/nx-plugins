@@ -1,0 +1,4 @@
+<% if(hasDataAccessLib) { %>export * from "<%= workspacePrefix %>/<%= ressourceNamePlural %>-data-access";<% } %>
+<% if(hasTypesLib) { %>export * from "<%= workspacePrefix %>/<%= ressourceNamePlural %>-types";<% } %>
+<% if(hasUILib) { %>export * from "<%= workspacePrefix %>/<%= ressourceNamePlural %>-ui";<% } %>
+<% if(hasUtilLib) { %>export * from "<%= workspacePrefix %>/<%= ressourceNamePlural %>-util";<% } %>
