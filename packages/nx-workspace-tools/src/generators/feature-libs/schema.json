@@ -5,15 +5,58 @@
   "description": "Generate a feature libraries scaffold for the workspace.",
   "type": "object",
   "properties": {
-    "name": {
+    "libsPath": {
       "type": "string",
-      "description": "The name of the feature libraries to generate.",
+      "description": "The path where the libraries should be created.",
       "$default": {
         "$source": "argv",
         "index": 0
       },
-      "x-prompt": "What name would you like to use?"
+      "x-prompt": "Where should the library be placed (e.g., libs/my-ressources)?"
+    },
+    "workspacePrefix": {
+      "type": "string",
+      "description": "The workspace prefix used by libraries",
+      "$default": {
+        "$source": "argv",
+        "index": 1
+      },
+      "x-prompt": "What is the libraries workspace prefix (e.g., @my-org)?"
+    },
+    "ressourceNameSingular": {
+      "type": "string",
+      "description": "The singular resource name to use in generated files.",
+      "$default": {
+        "$source": "argv",
+        "index": 2
+      },
+      "x-prompt": "What singular resource name would you like to use?"
+    },
+    "ressourceNamePlural": {
+      "type": "string",
+      "description": "The plural resource name to use in generated files.",
+      "$default": {
+        "$source": "argv",
+        "index": 3
+      },
+      "x-prompt": "What plural resource name would you like to use?"
+    },
+    "libTypes": {
+      "type": "array",
+      "description": "The lib types to generate.",
+      "items": {
+        "type": "string",
+        "enum": ["feature", "data-access", "ui", "types", "util"]
+      },
+      "default": ["feature", "data-access", "ui", "types", "util"],
+      "x-prompt": "Which library types would you like to generate?"
+    },
+    "useProjectJson": {
+      "type": "boolean",
+      "description": "Create a project.json file for each generated library.",
+      "default": false,
+      "x-prompt": "Should a project.json be created?"
     }
   },
-  "required": ["name"]
+  "required": ["libsPath", "ressourceNameSingular", "ressourceNamePlural"]
 }

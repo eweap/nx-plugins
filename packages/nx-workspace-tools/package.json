@@ -19,6 +19,10 @@
     "executors.json",
     "generators.json"
   ],
+  "dependencies": {
+    "@nx/devkit": "23.1.1",
+    "tslib": "^2.3.0"
+  },
   "nx": {
     "name": "nx-workspace-tools",
     "targets": {
@@ -48,10 +52,6 @@
         }
       }
     }
-  },
-  "dependencies": {
-    "@nx/devkit": "23.1.1",
-    "tslib": "^2.3.0"
   },
   "executors": "./executors.json",
   "generators": "./generators.json"

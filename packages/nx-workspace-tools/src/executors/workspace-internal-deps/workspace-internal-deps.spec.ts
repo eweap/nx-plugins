@@ -4,12 +4,12 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
+import { WorkspaceInternalDepsExecutorSchema } from './schema';
 import runExecutor, {
   analyzeWorkspaceDependencies,
   getWorkspaceDependencies,
   removeUnusedWorkspaceDependencies,
-} from './executor';
-import { WorkspaceInternalDepsExecutorSchema } from './schema';
+} from './workspace-internal-deps';
 
 const workspaceRoot = mkdtempSync(join(tmpdir(), 'nx-workspace-tools-'));
 const options: WorkspaceInternalDepsExecutorSchema = {};
