@@ -33,16 +33,6 @@ const ignoredFiles = [
   'yarn.lock',
   'bun.lockb',
 ];
-const usageSearchGlobs = [
-  '!**/node_modules/**',
-  '!**/dist/**',
-  '!**/coverage/**',
-  '!**/out-tsc/**',
-  '!**/e2e-output/**',
-  '!**/*.map',
-  '!**/*.snap',
-  ...ignoredFiles.map((fileName) => `!**/${fileName}`),
-];
 
 type DependencySection = (typeof dependencySections)[number];
 
@@ -96,30 +86,19 @@ function runCommand(
   return result.stdout?.trim() ?? '';
 }
 
-function isIgnoredPackageJsonPath(packageJsonPath: string): boolean {
-  const pathSegments = packageJsonPath.split(/[\\/]/);
-  return pathSegments.some((segment) => ignoredDirs.has(segment));
+function isIgnoredUsageEntry(entryName: string): boolean {
+  return (
+    ignoredDirs.has(entryName) ||
+    ignoredFiles.includes(entryName) ||
+    entryName.endsWith('.map') ||
+    entryName.endsWith('.snap')
+  );
 }
 
 function findPackageJsonFiles(workspaceRoot: string): string[] {
-  try {
-    const output = runCommand(
-      'rg',
-      ['--files', '-g', 'package.json'],
-      workspaceRoot,
-    );
-    return output.length > 0
-      ? output
-          .split('\n')
-          .filter(
-            (packageJsonPath) => !isIgnoredPackageJsonPath(packageJsonPath),
-          )
-      : [];
-  } catch {
-    return walkForPackageJson(workspaceRoot).map((filePath) =>
-      relative(workspaceRoot, filePath),
-    );
-  }
+  return walkForPackageJson(workspaceRoot).map((filePath) =>
+    relative(workspaceRoot, filePath),
+  );
 }
 
 function walkForPackageJson(dir: string): string[] {
@@ -187,32 +166,47 @@ function findUsages(
   packageJsonPath: string,
   dependencyName: string,
 ): string[] {
-  const projectDir = dirname(packageJsonPath);
-  const args = ['-l', '-F', dependencyName, projectDir, '--hidden'];
+  const projectDir = resolve(workspaceRoot, dirname(packageJsonPath));
+  return walkForDependencyUsages(workspaceRoot, projectDir, dependencyName);
+}
 
-  for (const glob of usageSearchGlobs) {
-    args.push('--glob', glob);
+function walkForDependencyUsages(
+  workspaceRoot: string,
+  dir: string,
+  dependencyName: string,
+): string[] {
+  const results: string[] = [];
+
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    if (isIgnoredUsageEntry(entry.name)) {
+      continue;
+    }
+
+    const fullPath = join(dir, entry.name);
+
+    if (entry.isDirectory()) {
+      results.push(
+        ...walkForDependencyUsages(workspaceRoot, fullPath, dependencyName),
+      );
+      continue;
+    }
+
+    if (!entry.isFile()) {
+      continue;
+    }
+
+    try {
+      const fileContents = readFileSync(fullPath, 'utf8');
+
+      if (fileContents.includes(dependencyName)) {
+        results.push(relative(workspaceRoot, fullPath));
+      }
+    } catch {
+      continue;
+    }
   }
 
-  const result = spawnSync('rg', args, {
-    cwd: workspaceRoot,
-    encoding: 'utf8',
-  });
-
-  if (result.error) {
-    throw result.error;
-  }
-
-  if (result.status === 1) {
-    return [];
-  }
-
-  if (result.status !== 0) {
-    const stderr = result.stderr?.trim();
-    throw new Error(stderr || `rg failed while checking ${dependencyName}`);
-  }
-
-  return result.stdout.trim().split('\n').filter(Boolean);
+  return results;
 }
 
 function logDependencyGroups(title: string, groups: DependencyGroup[]): void {
