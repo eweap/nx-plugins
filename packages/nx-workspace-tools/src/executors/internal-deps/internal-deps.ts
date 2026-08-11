@@ -3,10 +3,10 @@ import {
   type SpawnSyncOptionsWithStringEncoding,
   spawnSync,
 } from 'node:child_process';
-import { readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
 
-import type { WorkspaceInternalDepsExecutorSchema } from './schema';
+import type { InternalDepsExecutorSchema } from './schema';
 
 const workspaceDependencyPrefix = 'workspace:';
 const dependencySections = [
@@ -93,35 +93,6 @@ function isIgnoredUsageEntry(entryName: string): boolean {
     entryName.endsWith('.map') ||
     entryName.endsWith('.snap')
   );
-}
-
-function findPackageJsonFiles(workspaceRoot: string): string[] {
-  return walkForPackageJson(workspaceRoot).map((filePath) =>
-    relative(workspaceRoot, filePath),
-  );
-}
-
-function walkForPackageJson(dir: string): string[] {
-  const results: string[] = [];
-
-  for (const entry of readdirSync(dir, { withFileTypes: true })) {
-    if (entry.isDirectory() && ignoredDirs.has(entry.name)) {
-      continue;
-    }
-
-    const fullPath = join(dir, entry.name);
-
-    if (entry.isDirectory()) {
-      results.push(...walkForPackageJson(fullPath));
-      continue;
-    }
-
-    if (entry.isFile() && entry.name === 'package.json') {
-      results.push(fullPath);
-    }
-  }
-
-  return results;
 }
 
 function parsePackageJson(packageJsonPath: string): PackageJson {
@@ -237,41 +208,82 @@ function syncWorkspaceAfterFix(workspaceRoot: string): void {
   runCommand('pnpm', ['nx', 'sync'], workspaceRoot, { stdio: 'inherit' });
 }
 
-export function analyzeWorkspaceDependencies(workspaceRoot: string): {
+function getProjectPackageJsonPath(
+  workspaceRoot: string,
+  projectRoot: string,
+): string | null {
+  const packageJsonPath = resolve(workspaceRoot, projectRoot, 'package.json');
+
+  if (!existsSync(packageJsonPath)) {
+    return null;
+  }
+
+  return relative(workspaceRoot, packageJsonPath);
+}
+
+function resolveProjectRoot(
+  context: Parameters<PromiseExecutor<InternalDepsExecutorSchema>>[1],
+): string {
+  const projectName = context.projectName;
+
+  if (!projectName) {
+    throw new Error('Executor must run with a target project.');
+  }
+
+  const configuredProjectRoot =
+    context.projectsConfigurations?.projects?.[projectName]?.root;
+  const graphProjectRoot =
+    context.projectGraph?.nodes?.[projectName]?.data.root;
+  const projectRoot = configuredProjectRoot ?? graphProjectRoot;
+
+  if (!projectRoot) {
+    throw new Error(`Unable to resolve root for project ${projectName}.`);
+  }
+
+  return projectRoot;
+}
+
+export function analyzeProjectDependencies(
+  workspaceRoot: string,
+  projectRoot: string,
+): {
   allGroups: DependencyGroup[];
   unusedGroups: PackageJsonDependencyGroup[];
 } {
   const allGroups: DependencyGroup[] = [];
   const unusedGroups: PackageJsonDependencyGroup[] = [];
+  const packageJsonPath = getProjectPackageJsonPath(workspaceRoot, projectRoot);
 
-  for (const packageJsonPath of findPackageJsonFiles(workspaceRoot).sort()) {
-    const dependencyGroup = listWorkspaceDependencies(
-      workspaceRoot,
+  if (!packageJsonPath) {
+    return { allGroups, unusedGroups };
+  }
+
+  const dependencyGroup = listWorkspaceDependencies(
+    workspaceRoot,
+    packageJsonPath,
+  );
+
+  if (!dependencyGroup) {
+    return { allGroups, unusedGroups };
+  }
+
+  allGroups.push({
+    packageJsonPath,
+    entries: dependencyGroup.entries,
+  });
+
+  const unusedEntries = dependencyGroup.entries.filter(
+    (entry) =>
+      findUsages(workspaceRoot, packageJsonPath, entry.name).length === 0,
+  );
+
+  if (unusedEntries.length > 0) {
+    unusedGroups.push({
+      absolutePath: dependencyGroup.absolutePath,
+      entries: unusedEntries,
+      packageJson: dependencyGroup.packageJson,
       packageJsonPath,
-    );
-
-    if (!dependencyGroup) {
-      continue;
-    }
-
-    allGroups.push({
-      packageJsonPath,
-      entries: dependencyGroup.entries,
     });
-
-    const unusedEntries = dependencyGroup.entries.filter(
-      (entry) =>
-        findUsages(workspaceRoot, packageJsonPath, entry.name).length === 0,
-    );
-
-    if (unusedEntries.length > 0) {
-      unusedGroups.push({
-        absolutePath: dependencyGroup.absolutePath,
-        entries: unusedEntries,
-        packageJson: dependencyGroup.packageJson,
-        packageJsonPath,
-      });
-    }
   }
 
   return { allGroups, unusedGroups };
@@ -307,15 +319,19 @@ export function removeUnusedWorkspaceDependencies(
   return removedDependenciesCount;
 }
 
-const runExecutor: PromiseExecutor<
-  WorkspaceInternalDepsExecutorSchema
-> = async (options, context) => {
+const runExecutor: PromiseExecutor<InternalDepsExecutorSchema> = async (
+  options,
+  context,
+) => {
   const workspaceRoot = context.root;
-  const { allGroups, unusedGroups } =
-    analyzeWorkspaceDependencies(workspaceRoot);
+  const projectRoot = resolveProjectRoot(context);
+  const { allGroups, unusedGroups } = analyzeProjectDependencies(
+    workspaceRoot,
+    projectRoot,
+  );
 
-  logDependencyGroups('All workspace internal dependencies', allGroups);
-  logDependencyGroups('Unused workspace internal dependencies', unusedGroups);
+  logDependencyGroups('All project internal dependencies', allGroups);
+  logDependencyGroups('Unused project internal dependencies', unusedGroups);
 
   if (!options.write) {
     console.log('');

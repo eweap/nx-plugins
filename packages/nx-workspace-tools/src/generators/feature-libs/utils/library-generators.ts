@@ -1,104 +1,31 @@
 import { Tree, generateFiles } from '@nx/devkit';
 import { libraryGenerator as jsLibraryGenerator } from '@nx/js';
+import { storybookConfigurationGenerator } from '@nx/vue';
 import { libraryGenerator as vueLibraryGenerator } from '@nx/vue';
 import { camelCase } from 'lodash-es';
 import * as path from 'path';
 
+import { runGenericPatch } from '../patches/generic';
+import { patchTsConfigSpec } from '../patches/tsconfig-spec-json.patch';
+import { patchViteConfig } from '../patches/vite-config-mts.patch';
 import { FeatureLibsGeneratorSchema } from '../schema';
-import { LibraryContext, createLibraryContext } from './context';
-import {
-  addTailwindPluginToFeatureViteConfig,
-  addTailwindPluginToViteConfig,
-  addVueIncludeToTsConfigSpec,
-  applyGenericLibChanges,
-  normalizeStorybookMainFile,
-  normalizeStorybookPreviewFile,
-  normalizeStorybookTsConfigInclude,
-} from './file-helpers';
+import { createLibraryContext } from './context';
+import { addInternalDepsToPackageJson } from './file-helpers';
+import { setInferredLintAndTestTargets } from './infer-tasks';
 import { toUpperSnakeCase } from './string-helpers';
 
-async function generateVueLibrary(
-  tree: Tree,
-  context: LibraryContext,
-  options: {
-    tags: string;
-    useProjectJson?: boolean;
-  },
-) {
-  await vueLibraryGenerator(tree, {
-    directory: context.projectRoot,
-    linter: 'eslint',
-    name: context.projectName,
-    unitTestRunner: 'vitest',
-    importPath: context.packageName,
-    tags: options.tags,
-    addPlugin: true,
-    useProjectJson: options.useProjectJson ?? false,
-  });
-}
-
-async function generateJsLibrary(
-  tree: Tree,
-  context: LibraryContext,
-  options: {
-    tags: string;
-    useProjectJson?: boolean;
-  },
-) {
-  await jsLibraryGenerator(tree, {
-    directory: context.projectRoot,
-    linter: 'eslint',
-    name: context.projectName,
-    unitTestRunner: 'vitest',
-    importPath: context.packageName,
-    tags: options.tags,
-    addPlugin: true,
-    useProjectJson: options.useProjectJson ?? false,
-  });
-}
-
-function generateLibraryFiles(
+function applyLibFileTemplates(
   tree: Tree,
   templateFolder: string,
   projectRoot: string,
-  substitutions: Record<string, unknown>,
+  context: Record<string, unknown>,
 ) {
   generateFiles(
     tree,
     path.join(__dirname, '..', 'files', templateFolder),
     projectRoot,
-    substitutions,
+    context,
   );
-}
-
-function setInferredLintAndTestTargets(
-  tree: Tree,
-  projectRoot: string,
-  projectName: string,
-) {
-  const projectJsonPath = `${projectRoot}/project.json`;
-  if (!tree.exists(projectJsonPath)) {
-    return;
-  }
-
-  const raw = tree.read(projectJsonPath);
-  if (!raw) {
-    return;
-  }
-
-  const projectJson = JSON.parse(raw.toString());
-  projectJson.targets ||= {};
-  projectJson.targets.test = {
-    executor: '@nx/vitest/plugin',
-    options: { buildTarget: `${projectName}:build` },
-    outputs: ['{options.outputPath}'],
-  };
-  projectJson.targets.lint = {
-    executor: '@nx/eslint/plugin',
-    options: { lintFilePatterns: [projectRoot] },
-  };
-
-  tree.write(projectJsonPath, JSON.stringify(projectJson, null, 2));
 }
 
 export async function generateFeatureLib(
@@ -107,30 +34,38 @@ export async function generateFeatureLib(
 ) {
   const context = createLibraryContext(options, 'feature');
 
-  await generateVueLibrary(tree, context, {
+  await vueLibraryGenerator(tree, {
+    directory: context.projectRoot,
+    linter: 'eslint',
+    name: context.projectName,
+    unitTestRunner: 'vitest',
+    importPath: context.packageName,
     tags: 'type:feature',
-    useProjectJson: options.useProjectJson,
+    addPlugin: true,
+    useProjectJson: options.useProjectJson ?? false,
   });
 
-  generateLibraryFiles(tree, 'feature', context.projectRoot, {
+  // Install storybook
+  storybookConfigurationGenerator(tree, {
+    project: context.projectName,
+  });
+
+  // Apply patches
+  runGenericPatch(tree, context);
+  patchViteConfig(tree, context, { hasComponents: true });
+  patchTsConfigSpec(tree, context);
+  setInferredLintAndTestTargets(tree, context);
+
+  // Install internal deps
+  addInternalDepsToPackageJson(tree, context);
+
+  // Apply file templates
+  applyLibFileTemplates(tree, 'feature', context.projectRoot, {
     ...options,
     camelCase,
     workspacePrefix: context.workspacePrefix,
-    hasFeatureLib: options.libTypes.includes('feature'),
-    hasDataAccessLib: options.libTypes.includes('data-access'),
-    hasUILib: options.libTypes.includes('ui'),
-    hasTypesLib: options.libTypes.includes('types'),
-    hasUtilLib: options.libTypes.includes('util'),
+    libTypes: context.libTypes,
   });
-
-  applyGenericLibChanges(tree, context.projectRoot, context.packageName);
-  addTailwindPluginToFeatureViteConfig(
-    tree,
-    `${context.projectRoot}/vite.config.mts`,
-    context.projectName,
-  );
-  addVueIncludeToTsConfigSpec(tree, context.projectRoot);
-  setInferredLintAndTestTargets(tree, context.projectRoot, context.projectName);
 }
 
 export async function generateDataAccessLib(
@@ -139,19 +74,27 @@ export async function generateDataAccessLib(
 ) {
   const context = createLibraryContext(options, 'data-access');
 
-  await generateJsLibrary(tree, context, {
+  await jsLibraryGenerator(tree, {
+    directory: context.projectRoot,
+    linter: 'eslint',
+    name: context.projectName,
+    unitTestRunner: 'vitest',
+    importPath: context.packageName,
     tags: 'type:data-access',
-    useProjectJson: options.useProjectJson,
+    addPlugin: true,
+    useProjectJson: options.useProjectJson ?? false,
   });
 
-  generateLibraryFiles(tree, 'data-access', context.projectRoot, {
+  // Apply patches
+  runGenericPatch(tree, context);
+  patchViteConfig(tree, context, { hasComponents: false });
+  setInferredLintAndTestTargets(tree, context);
+
+  // Apply file templates
+  applyLibFileTemplates(tree, 'data-access', context.projectRoot, {
     ...options,
     uppercase: toUpperSnakeCase,
   });
-
-  applyGenericLibChanges(tree, context.projectRoot, context.packageName);
-  tree.delete(`${context.projectRoot}/src/vue-shims.d.ts`);
-  setInferredLintAndTestTargets(tree, context.projectRoot, context.projectName);
 }
 
 export async function generateTypesLib(
@@ -160,57 +103,60 @@ export async function generateTypesLib(
 ) {
   const context = createLibraryContext(options, 'types');
 
-  await generateJsLibrary(tree, context, {
+  await jsLibraryGenerator(tree, {
+    directory: context.projectRoot,
+    linter: 'eslint',
+    name: context.projectName,
+    unitTestRunner: 'vitest',
+    importPath: context.packageName,
     tags: 'type:types',
-    useProjectJson: options.useProjectJson,
+    addPlugin: true,
+    useProjectJson: options.useProjectJson ?? false,
   });
 
-  generateLibraryFiles(tree, 'types', context.projectRoot, {
+  // Apply patches
+  runGenericPatch(tree, context);
+  setInferredLintAndTestTargets(tree, context);
+
+  // Apply file templates
+  applyLibFileTemplates(tree, 'types', context.projectRoot, {
     ...options,
   });
-
-  applyGenericLibChanges(tree, context.projectRoot, context.packageName);
-  tree.delete(`${context.projectRoot}/src/vue-shims.d.ts`);
-  setInferredLintAndTestTargets(tree, context.projectRoot, context.projectName);
 }
 
-export async function generateUILib(
+export async function generateUiLib(
   tree: Tree,
   options: FeatureLibsGeneratorSchema,
 ) {
   const context = createLibraryContext(options, 'ui');
 
-  await generateVueLibrary(tree, context, {
+  await vueLibraryGenerator(tree, {
+    directory: context.projectRoot,
+    linter: 'eslint',
+    name: context.projectName,
+    unitTestRunner: 'vitest',
+    importPath: context.packageName,
     tags: 'type:ui',
-    useProjectJson: options.useProjectJson,
+    addPlugin: true,
+    useProjectJson: options.useProjectJson ?? false,
   });
 
-  generateLibraryFiles(tree, 'ui', context.projectRoot, {
+  // Install storybook
+  storybookConfigurationGenerator(tree, {
+    project: context.projectName,
+  });
+
+  // Apply patches
+  runGenericPatch(tree, context);
+  patchViteConfig(tree, context, { hasComponents: true });
+  patchTsConfigSpec(tree, context);
+  setInferredLintAndTestTargets(tree, context);
+
+  // Apply file templates
+  applyLibFileTemplates(tree, 'ui', context.projectRoot, {
     ...options,
     camelCase,
-    hasUtilLib: options.libTypes.includes('util'),
   });
-  normalizeStorybookMainFile(tree, context.projectRoot);
-  normalizeStorybookPreviewFile(tree, context.projectRoot);
-  normalizeStorybookTsConfigInclude(tree, context.projectRoot);
-
-  applyGenericLibChanges(tree, context.projectRoot, context.packageName);
-  addTailwindPluginToViteConfig(tree, `${context.projectRoot}/vite.config.mts`);
-  addVueIncludeToTsConfigSpec(tree, context.projectRoot);
-  setInferredLintAndTestTargets(tree, context.projectRoot, context.projectName);
-
-  const projectJsonPath = `${context.projectRoot}/project.json`;
-  const raw = tree.read(projectJsonPath);
-  if (raw) {
-    const projectJson = JSON.parse(raw.toString());
-    projectJson.targets ||= {};
-    projectJson.targets.storybook = {
-      executor: '@nx/storybook/plugin',
-      options: { buildTarget: `${context.projectName}:build` },
-      outputs: ['{options.outputPath}'],
-    };
-    tree.write(projectJsonPath, JSON.stringify(projectJson, null, 2));
-  }
 }
 
 export async function generateUtilLib(
@@ -219,18 +165,26 @@ export async function generateUtilLib(
 ) {
   const context = createLibraryContext(options, 'util');
 
-  await generateJsLibrary(tree, context, {
+  await jsLibraryGenerator(tree, {
+    directory: context.projectRoot,
+    linter: 'eslint',
+    name: context.projectName,
+    unitTestRunner: 'vitest',
+    importPath: context.packageName,
     tags: 'type:util',
-    useProjectJson: options.useProjectJson,
+    addPlugin: true,
+    useProjectJson: options.useProjectJson ?? false,
   });
 
-  generateLibraryFiles(tree, 'util', context.projectRoot, {
+  // Apply patches
+  runGenericPatch(tree, context);
+  patchViteConfig(tree, context, { hasComponents: false });
+  setInferredLintAndTestTargets(tree, context);
+
+  // Apply file templates
+  applyLibFileTemplates(tree, 'util', context.projectRoot, {
     ...options,
     camelCase,
     uppercase: toUpperSnakeCase,
   });
-
-  applyGenericLibChanges(tree, context.projectRoot, context.packageName);
-  tree.delete(`${context.projectRoot}/src/vue-shims.d.ts`);
-  setInferredLintAndTestTargets(tree, context.projectRoot, context.projectName);
 }

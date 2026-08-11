@@ -7,6 +7,7 @@ export type LibraryType = FeatureLibsGeneratorSchema['libTypes'][number];
 
 export interface LibraryContext {
   workspacePrefix: string;
+  libTypes: FeatureLibsGeneratorSchema['libTypes'];
   projectRoot: string;
   projectName: string;
   packageName: string;
@@ -88,5 +89,6 @@ export function createLibraryContext(
   return {
     ...context,
     workspacePrefix,
+    libTypes: options.libTypes,
   };
 }

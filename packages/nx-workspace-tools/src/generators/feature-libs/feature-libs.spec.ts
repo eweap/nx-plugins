@@ -204,7 +204,7 @@ describe('feature-libs generator', () => {
   });
 
   describe('ui', () => {
-    it('should generate the ui vite config with the icons plugin', async () => {
+    it('should generate the ui vite config with the tailwind plugin', async () => {
       await featureLibsGenerator(tree, {
         ...options,
         libTypes: ['ui'],

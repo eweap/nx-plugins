@@ -16,6 +16,7 @@ describe('createLibraryContext', () => {
       projectRoot: 'libs/my-ressources/feature',
       projectName: 'my-ressources',
       packageName: '@org/my-ressources',
+      libTypes: ['feature', 'data-access', 'ui', 'types', 'util'],
     });
 
     expect(createLibraryContext(options, 'data-access')).toEqual({
@@ -23,6 +24,7 @@ describe('createLibraryContext', () => {
       projectRoot: 'libs/my-ressources/data-access',
       projectName: 'my-ressources-data-access',
       packageName: '@org/my-ressources-data-access',
+      libTypes: ['feature', 'data-access', 'ui', 'types', 'util'],
     });
 
     expect(createLibraryContext(options, 'ui')).toEqual({
@@ -30,6 +32,7 @@ describe('createLibraryContext', () => {
       projectRoot: 'libs/my-ressources/ui',
       projectName: 'my-ressources-ui',
       packageName: '@org/my-ressources-ui',
+      libTypes: ['feature', 'data-access', 'ui', 'types', 'util'],
     });
 
     expect(createLibraryContext(options, 'types')).toEqual({
@@ -37,6 +40,7 @@ describe('createLibraryContext', () => {
       projectRoot: 'libs/my-ressources/types',
       projectName: 'my-ressources-types',
       packageName: '@org/my-ressources-types',
+      libTypes: ['feature', 'data-access', 'ui', 'types', 'util'],
     });
 
     expect(createLibraryContext(options, 'util')).toEqual({
@@ -44,6 +48,7 @@ describe('createLibraryContext', () => {
       projectRoot: 'libs/my-ressources/util',
       projectName: 'my-ressources-util',
       packageName: '@org/my-ressources-util',
+      libTypes: ['feature', 'data-access', 'ui', 'types', 'util'],
     });
   });
 });
