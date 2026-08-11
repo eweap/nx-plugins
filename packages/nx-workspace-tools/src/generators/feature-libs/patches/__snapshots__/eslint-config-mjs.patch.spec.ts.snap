@@ -1,6 +1,8 @@
-import vue from 'eslint-plugin-vue';
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-import baseConfig, { customRules } from '../../../eslint.config.mjs';
+exports[`patchEslintConfig > should patch the eslint config file 1`] = `
+"import vue from 'eslint-plugin-vue';
+import baseConfig, { customRules } from '../../eslint.config.mjs';
 
 export default [
   ...baseConfig,
@@ -21,3 +23,5 @@ export default [
   },
   ...customRules,
 ];
+"
+`;

@@ -5,7 +5,7 @@ import {
   generateDataAccessLib,
   generateFeatureLib,
   generateTypesLib,
-  generateUILib,
+  generateUiLib,
   generateUtilLib,
 } from './utils/library-generators';
 
@@ -13,7 +13,7 @@ export {
   generateDataAccessLib,
   generateFeatureLib,
   generateTypesLib,
-  generateUILib,
+  generateUiLib,
   generateUtilLib,
 } from './utils/library-generators';
 export { createLibraryContext } from './utils/context';
@@ -33,7 +33,7 @@ export default async function featureLibsGenerator(
   }
 
   if (selectedLibraryTypes.has('ui')) {
-    await generateUILib(tree, options);
+    await generateUiLib(tree, options);
   }
 
   if (selectedLibraryTypes.has('types')) {

@@ -7,9 +7,11 @@ export type LibraryType = FeatureLibsGeneratorSchema['libTypes'][number];
 
 export interface LibraryContext {
   workspacePrefix: string;
+  libTypes: FeatureLibsGeneratorSchema['libTypes'];
   projectRoot: string;
   projectName: string;
   packageName: string;
+  useProjectJson: boolean;
 }
 
 // Detect the prefix from the root package.json. This allows the generator to
@@ -88,5 +90,7 @@ export function createLibraryContext(
   return {
     ...context,
     workspacePrefix,
+    libTypes: options.libTypes,
+    useProjectJson: options.useProjectJson ?? false,
   };
 }

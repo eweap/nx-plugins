@@ -1,4 +1,4 @@
-<% if(hasDataAccessLib) { %>export * from "<%= workspacePrefix %>/<%= ressourceNamePlural %>-data-access";<% } %>
-<% if(hasTypesLib) { %>export * from "<%= workspacePrefix %>/<%= ressourceNamePlural %>-types";<% } %>
-<% if(hasUILib) { %>export * from "<%= workspacePrefix %>/<%= ressourceNamePlural %>-ui";<% } %>
-<% if(hasUtilLib) { %>export * from "<%= workspacePrefix %>/<%= ressourceNamePlural %>-util";<% } %>
+<% if(libTypes.includes('data-access')) { %>export * from "<%= workspacePrefix %>/<%= ressourceNamePlural %>-data-access";<% } %>
+<% if(libTypes.includes('types')) { %>export * from "<%= workspacePrefix %>/<%= ressourceNamePlural %>-types";<% } %>
+<% if(libTypes.includes('ui')) { %>export * from "<%= workspacePrefix %>/<%= ressourceNamePlural %>-ui";<% } %>
+<% if(libTypes.includes('util')) { %>export * from "<%= workspacePrefix %>/<%= ressourceNamePlural %>-util";<% } %>

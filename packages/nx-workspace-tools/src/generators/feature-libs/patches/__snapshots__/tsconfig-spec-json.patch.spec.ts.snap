@@ -1,4 +1,7 @@
-{
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`patchTsConfigSpec > should patch the tsconfig spec file 1`] = `
+"{
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./out-tsc/vitest",
@@ -24,7 +27,7 @@
     "src/**/*.test.jsx",
     "src/**/*.spec.jsx",
     "src/**/*.d.ts",
-    "testing/**/*.ts"
+    "src/**/*.vue"
   ],
   "references": [
     {
@@ -32,3 +35,5 @@
     }
   ]
 }
+"
+`;

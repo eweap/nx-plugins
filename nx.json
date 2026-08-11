@@ -30,6 +30,7 @@
     },
     {
       "plugin": "@nx/vitest",
+      "exclude": ["**/__snapshots__/**"],
       "options": {
         "testTargetName": "test",
         "testMode": "watch"

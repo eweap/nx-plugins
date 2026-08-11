@@ -20,7 +20,7 @@ export default [
     },
   },
   {
-    ignores: ['**/out-tsc'],
+    ignores: ['**/out-tsc', '**/__snapshots__/**'],
   },
   {
     files: ['**/package.json', '**/executors.json', '**/generators.json'],

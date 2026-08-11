@@ -4,31 +4,45 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
-import { WorkspaceInternalDepsExecutorSchema } from './schema';
 import runExecutor, {
-  analyzeWorkspaceDependencies,
+  analyzeProjectDependencies,
   getWorkspaceDependencies,
   removeUnusedWorkspaceDependencies,
-} from './workspace-internal-deps';
+} from './internal-deps';
+import { InternalDepsExecutorSchema } from './schema';
 
 const workspaceRoot = mkdtempSync(join(tmpdir(), 'nx-workspace-tools-'));
-const options: WorkspaceInternalDepsExecutorSchema = {};
+const options: InternalDepsExecutorSchema = {};
 const context: ExecutorContext = {
   root: workspaceRoot,
   cwd: workspaceRoot,
   isVerbose: false,
+  projectName: 'app',
   projectGraph: {
-    nodes: {},
+    nodes: {
+      app: {
+        name: 'app',
+        type: 'app',
+        data: {
+          root: 'packages/app',
+          targets: {},
+        },
+      },
+    },
     dependencies: {},
   },
   projectsConfigurations: {
-    projects: {},
+    projects: {
+      app: {
+        root: 'packages/app',
+      },
+    },
     version: 2,
   },
   nxJsonConfiguration: {},
 };
 
-describe('workspace-internal-deps executor', () => {
+describe('internal-deps executor', () => {
   it('can run', async () => {
     const output = await runExecutor(options, context);
     expect(output.success).toBe(true);
@@ -62,14 +76,16 @@ describe('workspace-internal-deps executor', () => {
     ]);
   });
 
-  it('analyzes unused internal dependencies from a workspace tree', () => {
+  it('analyzes unused internal dependencies only for target project', () => {
     const appDir = join(workspaceRoot, 'packages', 'app');
     const sharedDir = join(workspaceRoot, 'packages', 'shared');
     const uiDir = join(workspaceRoot, 'packages', 'ui');
+    const otherDir = join(workspaceRoot, 'packages', 'other');
 
     mkdirSync(join(appDir, 'src'), { recursive: true });
     mkdirSync(join(sharedDir, 'src'), { recursive: true });
     mkdirSync(join(uiDir, 'src'), { recursive: true });
+    mkdirSync(join(otherDir, 'src'), { recursive: true });
 
     writeFileSync(
       join(appDir, 'package.json'),
@@ -116,8 +132,24 @@ describe('workspace-internal-deps executor', () => {
       )}\n`,
     );
 
-    const { allGroups, unusedGroups } =
-      analyzeWorkspaceDependencies(workspaceRoot);
+    writeFileSync(
+      join(otherDir, 'package.json'),
+      `${JSON.stringify(
+        {
+          name: '@nx-workspace-tools/other',
+          dependencies: {
+            '@nx-workspace-tools/ui': 'workspace:*',
+          },
+        },
+        null,
+        2,
+      )}\n`,
+    );
+
+    const { allGroups, unusedGroups } = analyzeProjectDependencies(
+      workspaceRoot,
+      'packages/app',
+    );
 
     expect(allGroups).toEqual([
       {
@@ -147,7 +179,7 @@ describe('workspace-internal-deps executor', () => {
   });
 
   it('removes unused workspace dependencies and drops empty sections', () => {
-    const tempDir = mkdtempSync(join(tmpdir(), 'workspace-internal-deps-'));
+    const tempDir = mkdtempSync(join(tmpdir(), 'internal-deps-'));
     const packageJsonPath = join(tempDir, 'package.json');
 
     writeFileSync(
