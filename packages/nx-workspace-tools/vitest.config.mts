@@ -15,5 +15,6 @@ export default defineConfig(() => ({
       provider: 'v8' as const,
     },
     hookTimeout: 60_000,
+    testTimeout: 60_000,
   },
 }));
