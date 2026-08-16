@@ -122,7 +122,7 @@ describe.skip('feature-libs generator', () => {
     for (const eslintConfigPath of eslintConfigPaths) {
       expectGeneratedFileToMatchSnapshot(eslintConfigPath);
     }
-  }, 10000);
+  });
 
   it('should update package.json exports when the generated package exists', async () => {
     await featureLibsGenerator(tree, {
@@ -147,7 +147,7 @@ describe.skip('feature-libs generator', () => {
       },
     });
     expect(packageJson.devDependencies).toEqual({});
-  }, 10000);
+  });
 
   it('should include vue files in feature and ui tsconfig.spec', async () => {
     await featureLibsGenerator(tree, {
@@ -164,7 +164,7 @@ describe.skip('feature-libs generator', () => {
 
     expect(featureSpecTsConfig.include.at(-1)).toBe('src/**/*.vue');
     expect(uiSpecTsConfig.include.at(-1)).toBe('src/**/*.vue');
-  }, 10000);
+  });
 
   it('should generate all requested library projects', async () => {
     await featureLibsGenerator(tree, {
@@ -179,7 +179,7 @@ describe.skip('feature-libs generator', () => {
     expect(readProjectConfiguration(tree, 'my-ressources-ui')).toBeDefined();
     expect(readProjectConfiguration(tree, 'my-ressources-types')).toBeDefined();
     expect(readProjectConfiguration(tree, 'my-ressources-util')).toBeDefined();
-  }, 10000);
+  });
 
   describe('data-access', () => {
     it('should generate a data-access project', async () => {
@@ -191,7 +191,7 @@ describe.skip('feature-libs generator', () => {
       expect(
         readProjectConfiguration(tree, 'my-ressources-data-access'),
       ).toBeDefined();
-    }, 10000);
+    });
   });
 
   describe('feature', () => {
@@ -204,7 +204,7 @@ describe.skip('feature-libs generator', () => {
       expectGeneratedFileToMatchSnapshot(
         'libs/my-ressources/feature/vite.config.mts',
       );
-    }, 10000);
+    });
   });
 
   describe('ui', () => {
@@ -217,7 +217,7 @@ describe.skip('feature-libs generator', () => {
       expectGeneratedFileToMatchSnapshot(
         'libs/my-ressources/ui/vite.config.mts',
       );
-    }, 10000);
+    });
 
     describe('storybook', () => {
       it('should generate storybook files for ui libs', async () => {
@@ -238,7 +238,7 @@ describe.skip('feature-libs generator', () => {
         expectGeneratedFileToMatchSnapshot(
           'libs/my-ressources/ui/tsconfig.storybook.json',
         );
-      }, 10000);
+      });
 
       it('should override storybook tsconfig include entries for ui libs', async () => {
         await featureLibsGenerator(tree, {
@@ -253,7 +253,7 @@ describe.skip('feature-libs generator', () => {
         expect(storybookTsConfig.include).toContain('.storybook/*.js');
         expect(storybookTsConfig.include).toContain('.storybook/**/*.ts');
         expect(storybookTsConfig.include).not.toContain('.storybook/**/*.vue');
-      }, 10000);
+      });
     });
   });
 });

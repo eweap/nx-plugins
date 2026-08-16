@@ -25,7 +25,7 @@ describe('patchPackageJson', () => {
     const packageJson = tree.read(packageJsonPath, 'utf-8');
 
     await expect(packageJson).toMatchSnapshot();
-  }, 10_000);
+  });
 
   it('should patch the package json file without inferred task', async () => {
     tree = await createVueWorkspaceTree({
@@ -42,5 +42,5 @@ describe('patchPackageJson', () => {
     const packageJson = tree.read(packageJsonPath, 'utf-8');
 
     await expect(packageJson).toMatchSnapshot();
-  }, 10_000);
+  });
 });
