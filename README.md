@@ -32,13 +32,23 @@ These targets are either [inferred automatically](https://nx.dev/concepts/inferr
 
 ## Versioning and releasing
 
-To version and release the library use
+Local release updates versions, changelogs, commit, tag. Publish happens in GitHub Actions.
 
 ```
-npx nx release
+pnpm nx release --skip-publish
 ```
 
-Pass `--dry-run` to see what would happen without actually releasing the library.
+Then push release commit and tag:
+
+```sh
+git push && git push --tags
+```
+
+Tag push matching `v*.*.*` triggers [.github/workflows/publish.yml](.github/workflows/publish.yml), which runs `pnpm nx release publish` against npm.
+
+Before first publish, add repository secret `NPM_ACCESS_TOKEN` with npm token that has write access to `@eweap/nx-workspace-tools`.
+
+Pass `--dry-run` to either command to inspect behavior without publishing.
 
 [Learn more about Nx release &raquo;](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
 

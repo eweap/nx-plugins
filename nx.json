@@ -54,6 +54,7 @@
     }
   },
   "release": {
+    "projects": ["nx-workspace-tools"],
     "version": {
       "preVersionCommand": "pnpm dlx nx run-many -t build"
     }

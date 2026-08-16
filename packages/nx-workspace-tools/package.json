@@ -19,6 +19,10 @@
     "executors.json",
     "generators.json"
   ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "dependencies": {
     "@nx/devkit": "*",
     "@nx/js": "*",
