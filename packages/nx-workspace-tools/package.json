@@ -19,6 +19,9 @@
     "executors.json",
     "generators.json"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "@nx/devkit": "*",
     "@nx/js": "*",
