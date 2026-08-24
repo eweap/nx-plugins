@@ -56,7 +56,7 @@
   "release": {
     "projects": ["nx-workspace-tools"],
     "version": {
-      "preVersionCommand": "pnpm dlx nx run-many -t build"
+      "preVersionCommand": "pnpm nx run-many -t build"
     }
   },
   "nxCloudId": "6a7904060a96ec3872c730e7"
