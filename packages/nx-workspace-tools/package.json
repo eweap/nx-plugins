@@ -2,6 +2,9 @@
   "name": "@eweap/nx-workspace-tools",
   "version": "0.0.2-4",
   "type": "commonjs",
+  "repository": {
+    "url": "https://github.com/eweap/nx-plugins"
+  },
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
