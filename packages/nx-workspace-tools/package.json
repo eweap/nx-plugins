@@ -52,6 +52,9 @@
             {
               "input": "./packages/nx-workspace-tools/src",
               "glob": "**/!(*.ts)",
+              "ignore": [
+                "**/__snapshots__/**"
+              ],
               "output": "."
             },
             {
