@@ -3,7 +3,19 @@ import tailwindcss from '@tailwindcss/vite';
 import vue from '@vitejs/plugin-vue';
 import { defineConfig } from 'vite';
 
+function normalizeBasePath(basePath?: string): string {
+  if (!basePath || basePath === '/') {
+    return '/';
+  }
+
+  const trimmedBasePath = basePath.replace(/^\/+|\/+$/g, '');
+  return `/${trimmedBasePath}/`;
+}
+
 export default defineConfig(() => ({
+  base: normalizeBasePath(
+    process.env.NX_WEBSITE_BASE_PATH ?? process.env.VITE_BASE_PATH,
+  ),
   root: import.meta.dirname,
   cacheDir: '../../node_modules/.vite/apps/website',
   server: {

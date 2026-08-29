@@ -7,6 +7,7 @@
   "private": true,
   "dependencies": {
     "@nx/devkit": "23.1.1",
+    "highlight.js": "^11.12.0",
     "tailwindcss": "^4.3.3",
     "vue": "^3.5.13"
   },
