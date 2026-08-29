@@ -1,9 +1,11 @@
 import { workspaceRoot } from '@nx/devkit';
 import { nxE2EPreset } from '@nx/playwright/preset';
 import { defineConfig, devices } from '@playwright/test';
+import { env } from 'node:process';
+import { fileURLToPath } from 'node:url';
 
 // For CI, you may want to set BASE_URL to the deployed application.
-const baseURL = process.env['BASE_URL'] || 'http://localhost:4300';
+const baseURL = env.BASE_URL || 'http://localhost:4300';
 
 /**
  * Read environment variables from file.
@@ -22,7 +24,9 @@ const baseURL = process.env['BASE_URL'] || 'http://localhost:4300';
  * (.ts/.js/.mts/.mjs/.cts/.cjs).
  */
 export default defineConfig({
-  ...nxE2EPreset(import.meta.dirname, { testDir: './src' }),
+  ...nxE2EPreset(fileURLToPath(new URL('.', import.meta.url)), {
+    testDir: './src',
+  }),
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     baseURL,

@@ -31,7 +31,6 @@
     "@nx/vue": "*",
     "@phenomnomnominal/tsquery": "*",
     "lodash-es": "*",
-    "nx": "*",
     "tslib": "*",
     "typescript": "*"
   },
