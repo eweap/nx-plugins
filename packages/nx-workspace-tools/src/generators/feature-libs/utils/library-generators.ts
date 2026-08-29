@@ -8,8 +8,8 @@ import { runGenericPatch } from '../patches/generic';
 import { patchTsConfigSpec } from '../patches/tsconfig-spec-json.patch';
 import { patchViteConfig } from '../patches/vite-config-mts.patch';
 import { FeatureLibsGeneratorSchema } from '../schema';
-import { addInternalDepsToPackageJson } from './add-internal-deps';
 import { createLibraryContext } from './context';
+import { addInternalDepsToPackageJson } from './file-helpers';
 import { installStorybook } from './install-storybook';
 import { toUpperSnakeCase } from './string-helpers';
 

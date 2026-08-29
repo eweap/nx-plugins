@@ -43,12 +43,12 @@ const context: ExecutorContext = {
 };
 
 describe('internal-deps executor', () => {
-  it('should run', async () => {
+  it('can run', async () => {
     const output = await runExecutor(options, context);
     expect(output.success).toBe(true);
   });
 
-  it('should collect only workspace dependencies declared with a workspace version', () => {
+  it('collects only workspace dependencies declared with a workspace version', () => {
     const dependencies = getWorkspaceDependencies({
       dependencies: {
         '@nx-workspace-tools/ui': 'workspace:*',
@@ -76,7 +76,7 @@ describe('internal-deps executor', () => {
     ]);
   });
 
-  it('should analyze unused internal dependencies only for target project', () => {
+  it('analyzes unused internal dependencies only for target project', () => {
     const appDir = join(workspaceRoot, 'packages', 'app');
     const sharedDir = join(workspaceRoot, 'packages', 'shared');
     const uiDir = join(workspaceRoot, 'packages', 'ui');
@@ -178,7 +178,7 @@ describe('internal-deps executor', () => {
     ]);
   });
 
-  it('should remove unused workspace dependencies and drop empty sections', () => {
+  it('removes unused workspace dependencies and drops empty sections', () => {
     const tempDir = mkdtempSync(join(tmpdir(), 'internal-deps-'));
     const packageJsonPath = join(tempDir, 'package.json');
 
