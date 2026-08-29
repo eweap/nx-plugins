@@ -82,7 +82,6 @@
       "preVersionCommand": "pnpm nx run-many -t build"
     },
     "changelog": {
-      "automaticFromRef": true,
       "workspaceChangelog": {
         "createRelease": "github"
       }
