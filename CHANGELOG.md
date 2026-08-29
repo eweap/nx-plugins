@@ -1,3 +1,36 @@
+## 0.0.2-8 (2026-08-29)
+
+### 🚀 Features
+
+- **nx-cloud:** setup nx cloud workspace ([8a015c2](https://github.com/eweap/nx-plugins/commit/8a015c2))
+- **nx-cloud:** setup nx cloud workspace ([fbe4359](https://github.com/eweap/nx-plugins/commit/fbe4359))
+- **nx-cloud:** add token configuration ([12877d7](https://github.com/eweap/nx-plugins/commit/12877d7))
+- **nx-workspace-tools:** Add implementation for executor workspace-internal-deps ([7845cd0](https://github.com/eweap/nx-plugins/commit/7845cd0))
+- **nx-workspace-tools:** Add implementation for generator feature-libs ([33c4435](https://github.com/eweap/nx-plugins/commit/33c4435))
+- **nx-workspace-tools:** replace rg binary use with native node functions ([7edbdb0](https://github.com/eweap/nx-plugins/commit/7edbdb0))
+- **nx-workspace-tools:** Rewrite logic ([1508049](https://github.com/eweap/nx-plugins/commit/1508049))
+- **nx-workspace-tools:** Fix increase testTimeout ([f31454f](https://github.com/eweap/nx-plugins/commit/f31454f))
+- **nx-workspace-tools:** Fix increase hookTimeout instead of testTimeout ([62c93c8](https://github.com/eweap/nx-plugins/commit/62c93c8))
+- **nx-workspace-tools:** Fix increase hookTimeout AND testTimeout ([dcdbc01](https://github.com/eweap/nx-plugins/commit/dcdbc01))
+- **nx-workspace-tools:** Configure publish ([b14ab5b](https://github.com/eweap/nx-plugins/commit/b14ab5b))
+- **nx-workspace-tools:** Use a better command for release preVersionCommand ([db631d2](https://github.com/eweap/nx-plugins/commit/db631d2))
+- **nx-workspace-tools:** Configure github release ([af11d22](https://github.com/eweap/nx-plugins/commit/af11d22))
+- **nx-workspace-tools:** remove publishConfig from package.json ([bc2640e](https://github.com/eweap/nx-plugins/commit/bc2640e))
+- **nx-workspace-tools:** fix publishConfig access ([f2c5542](https://github.com/eweap/nx-plugins/commit/f2c5542))
+- **nx-workspace-tools:** fix publish by adding build as target deps ([8e660a6](https://github.com/eweap/nx-plugins/commit/8e660a6))
+- **nx-workspace-tools:** remove NPM_ACCESS_TOKEN to use trusted publisher feature ([45798d8](https://github.com/eweap/nx-plugins/commit/45798d8))
+- **website:** create empty base with tailwind to create a doc ([6b43d1f](https://github.com/eweap/nx-plugins/commit/6b43d1f))
+- **website:** create website content ([e06bcb5](https://github.com/eweap/nx-plugins/commit/e06bcb5))
+- **workspace:** Add NX AI tools ([d4a62ee](https://github.com/eweap/nx-plugins/commit/d4a62ee))
+
+### 🩹 Fixes
+
+- **nx-workspace-tools:** add package repository url ([620fefa](https://github.com/eweap/nx-plugins/commit/620fefa))
+
+### ❤️ Thank You
+
+- Jonathan Bonnefoy @eweap
+
 ## 0.0.2-7 (2026-08-24)
 
 ### 🚀 Features
