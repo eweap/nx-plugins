@@ -2,6 +2,7 @@ packages:
   - 'apps/*'
   - 'libs/*'
   - 'libs/*/*'
+  - 'packages/*'
 
 autoInstallPeers: true
 ignoreWorkspaceRootCheck: true
