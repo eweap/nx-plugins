@@ -5,12 +5,6 @@
   "references": [
     {
       "path": "./packages/nx-workspace-tools"
-    },
-    {
-      "path": "./apps/website-e2e"
-    },
-    {
-      "path": "./apps/website"
     }
   ]
 }
