@@ -6,8 +6,8 @@ import { runGenericPatch } from '../patches/generic';
 import { patchTsConfigSpec } from '../patches/tsconfig-spec-json.patch';
 import { patchViteConfig } from '../patches/vite-config-mts.patch';
 import { FeatureLibsGeneratorSchema } from '../schema';
-import { addInternalDepsToPackageJson } from './add-internal-deps';
 import { LibraryContext } from './context';
+import { addInternalDepsToPackageJson } from './file-helpers';
 import { installStorybook } from './install-storybook';
 import {
   generateDataAccessLib,
@@ -17,7 +17,7 @@ import {
   generateUtilLib,
 } from './library-generators';
 
-vi.mock(import('./add-internal-deps.js'), async (importOriginal) => ({
+vi.mock(import('./file-helpers.js'), async (importOriginal) => ({
   ...(await importOriginal()),
   addInternalDepsToPackageJson: vi.fn(),
 }));

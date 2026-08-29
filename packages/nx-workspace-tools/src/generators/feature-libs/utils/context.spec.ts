@@ -11,7 +11,7 @@ describe('createLibraryContext', () => {
     useProjectJson: true,
   };
 
-  it('should build the expected context for each library type', () => {
+  it('builds the expected context for each library type', () => {
     expect(createLibraryContext(options, 'feature')).toEqual({
       workspacePrefix: '@org',
       projectRoot: 'libs/my-ressources/feature',
