@@ -1,7 +1,11 @@
 packages:
-  - 'packages/*'
+  - 'apps/*'
+  - 'libs/*'
+  - 'libs/*/*'
 
 autoInstallPeers: true
+ignoreWorkspaceRootCheck: true
+
 allowBuilds:
   esbuild: false
   nx: true
