@@ -2,30 +2,6 @@ import { Tree, updateJson } from '@nx/devkit';
 
 import { LibraryContext } from './context';
 
-function ensurePackageJson(
-  tree: Tree,
-  packageJsonPath: string,
-  packageName: string,
-) {
-  if (tree.exists(packageJsonPath)) {
-    return;
-  }
-
-  tree.write(
-    packageJsonPath,
-    JSON.stringify(
-      {
-        name: packageName,
-        version: '0.0.1',
-        exports: {},
-        devDependencies: {},
-      },
-      null,
-      2,
-    ),
-  );
-}
-
 export function addInternalDepsToPackageJson(
   tree: Tree,
   {
@@ -37,7 +13,6 @@ export function addInternalDepsToPackageJson(
   }: LibraryContext,
 ) {
   const packageJsonPath = `${projectRoot}/package.json`;
-  ensurePackageJson(tree, packageJsonPath, packageName);
 
   updateJson(tree, packageJsonPath, (pkgJson) => {
     pkgJson.devDependencies = {};
