@@ -1,8 +1,13 @@
 import { ExecutorContext } from '@nx/devkit';
+import { spawnSync } from 'node:child_process';
 import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+
+vi.mock('node:child_process', () => ({
+  spawnSync: vi.fn(),
+}));
 
 import runExecutor, {
   analyzeProjectDependencies,
@@ -46,6 +51,112 @@ describe('internal-deps executor', () => {
   it('should run', async () => {
     const output = await runExecutor(options, context);
     expect(output.success).toBe(true);
+  });
+
+  it('should fail in dry-run mode when an internal dependency is unused', async () => {
+    const projectDir = join(workspaceRoot, 'packages', 'unused');
+    mkdirSync(join(projectDir, 'src'), { recursive: true });
+    writeFileSync(
+      join(projectDir, 'package.json'),
+      JSON.stringify({
+        name: '@nx-workspace-tools/unused',
+        dependencies: {
+          '@nx-workspace-tools/missing': 'workspace:*',
+        },
+      }),
+    );
+
+    const output = await runExecutor(
+      { write: false },
+      {
+        ...context,
+        projectName: 'unused',
+        projectGraph: {
+          ...context.projectGraph,
+          nodes: {
+            unused: {
+              name: 'unused',
+              type: 'lib',
+              data: { root: 'packages/unused', targets: {} },
+            },
+          },
+        },
+        projectsConfigurations: {
+          ...context.projectsConfigurations,
+          projects: { unused: { root: 'packages/unused' } },
+        },
+      },
+    );
+
+    expect(output.success).toBe(false);
+  });
+
+  it('should include test files when checking dependency usage', () => {
+    const projectDir = join(workspaceRoot, 'packages', 'test-usage');
+    mkdirSync(join(projectDir, 'src'), { recursive: true });
+    writeFileSync(
+      join(projectDir, 'package.json'),
+      JSON.stringify({
+        name: '@nx-workspace-tools/test-usage',
+        dependencies: {
+          '@nx-workspace-tools/testing': 'workspace:*',
+        },
+      }),
+    );
+    writeFileSync(
+      join(projectDir, 'src', 'test-usage.spec.ts'),
+      "import '@nx-workspace-tools/testing';\n",
+    );
+
+    expect(
+      analyzeProjectDependencies(workspaceRoot, 'packages/test-usage')
+        .unusedGroups,
+    ).toEqual([]);
+  });
+
+  it('should succeed after removing unused dependencies with write enabled', async () => {
+    const projectDir = join(workspaceRoot, 'packages', 'write-unused');
+    mkdirSync(projectDir, { recursive: true });
+    writeFileSync(
+      join(projectDir, 'package.json'),
+      JSON.stringify({
+        name: '@nx-workspace-tools/write-unused',
+        dependencies: {
+          '@nx-workspace-tools/missing': 'workspace:*',
+        },
+      }),
+    );
+    vi.mocked(spawnSync).mockReturnValue({
+      status: 0,
+      stdout: '',
+      stderr: '',
+    } as ReturnType<typeof spawnSync>);
+
+    const output = await runExecutor(
+      { write: true },
+      {
+        ...context,
+        projectName: 'write-unused',
+        projectGraph: {
+          ...context.projectGraph,
+          nodes: {
+            'write-unused': {
+              name: 'write-unused',
+              type: 'lib',
+              data: { root: 'packages/write-unused', targets: {} },
+            },
+          },
+        },
+        projectsConfigurations: {
+          ...context.projectsConfigurations,
+          projects: { 'write-unused': { root: 'packages/write-unused' } },
+        },
+      },
+    );
+
+    expect(output.success).toBe(true);
+    expect(JSON.parse(readFileSync(join(projectDir, 'package.json'), 'utf8')))
+      .not.toHaveProperty('dependencies');
   });
 
   it('should collect only workspace dependencies declared with a workspace version', () => {

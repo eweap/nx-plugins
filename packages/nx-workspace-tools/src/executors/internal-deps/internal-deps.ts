@@ -166,14 +166,10 @@ function walkForDependencyUsages(
       continue;
     }
 
-    try {
-      const fileContents = readFileSync(fullPath, 'utf8');
+    const fileContents = readFileSync(fullPath, 'utf8');
 
-      if (fileContents.includes(dependencyName)) {
-        results.push(relative(workspaceRoot, fullPath));
-      }
-    } catch {
-      continue;
+    if (fileContents.includes(dependencyName)) {
+      results.push(relative(workspaceRoot, fullPath));
     }
   }
 
@@ -338,7 +334,7 @@ const runExecutor: PromiseExecutor<InternalDepsExecutorSchema> = async (
     console.log(
       'Dry run only. Pass write: true to remove unused dependencies.',
     );
-    return { success: true };
+    return { success: unusedGroups.length === 0 };
   }
 
   if (unusedGroups.length === 0) {
