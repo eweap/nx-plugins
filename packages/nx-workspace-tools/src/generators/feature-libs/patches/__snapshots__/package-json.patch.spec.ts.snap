@@ -16,14 +16,14 @@ exports[`patchPackageJson > should patch the package json file with inferred tas
       "default": "./src/index.ts"
     }
   },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
   "nx": {
     "name": "my-resources",
     "tags": [
       "type:feature"
     ]
-  },
-  "dependencies": {
-    "tslib": "^2.3.0"
   },
   "devDependencies": {}
 }
@@ -46,14 +46,14 @@ exports[`patchPackageJson > should patch the package json file without inferred 
       "default": "./src/index.ts"
     }
   },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
   "nx": {
     "name": "my-resources",
     "tags": [
       "type:feature"
     ]
-  },
-  "dependencies": {
-    "tslib": "^2.3.0"
   },
   "devDependencies": {}
 }

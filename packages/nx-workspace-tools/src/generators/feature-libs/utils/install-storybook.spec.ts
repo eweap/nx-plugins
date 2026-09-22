@@ -24,7 +24,7 @@ describe('installStorybook', () => {
   it('should install storybook configuration for project', async () => {
     await installStorybook(tree, 'my-project');
 
-    expect(ensurePackage).toHaveBeenCalledWith('@nx/storybook', '23.1.1');
+    expect(ensurePackage).toHaveBeenCalledWith('@nx/storybook', '23.2.1');
     expect(configurationGenerator).toHaveBeenCalledWith(tree, {
       addPlugin: true,
       project: 'my-project',
