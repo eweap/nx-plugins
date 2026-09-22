@@ -1,7 +1,15 @@
 /// <reference types='vitest' />
 import tailwindcss from '@tailwindcss/vite';
 import vue from '@vitejs/plugin-vue';
+import { readFileSync } from 'node:fs';
 import { defineConfig } from 'vite';
+
+const nxWorkspaceToolsPackage = JSON.parse(
+  readFileSync(
+    `${import.meta.dirname}/../../packages/nx-workspace-tools/package.json`,
+    'utf8',
+  ),
+) as { version: string };
 
 function normalizeBasePath(basePath?: string): string {
   if (!basePath || basePath === '/') {
@@ -16,6 +24,11 @@ export default defineConfig(() => ({
   base: normalizeBasePath(
     process.env.NX_WEBSITE_BASE_PATH ?? process.env.VITE_BASE_PATH,
   ),
+  define: {
+    'import.meta.env.VITE_NX_WORKSPACE_TOOLS_VERSION': JSON.stringify(
+      nxWorkspaceToolsPackage.version,
+    ),
+  },
   root: import.meta.dirname,
   cacheDir: '../../node_modules/.vite/apps/website',
   server: {

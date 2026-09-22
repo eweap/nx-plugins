@@ -1,8 +1,14 @@
 <script setup lang="ts">
 import {
   apiEntries,
+  deploymentContent,
+  faqItems,
   featureItems,
   gettingStartedCode,
+  heroContent,
+  installationCommand,
+  quickLookContent,
+  sectionContent,
   tocItems,
   usageExamples,
 } from '../utils/docs-content';
@@ -23,16 +29,7 @@ defineProps<{
     id="top"
     class="mx-auto max-w-7xl px-4 pb-20 pt-8 sm:px-6 lg:px-8 lg:pt-12"
   >
-    <HeroSection
-      title="nx-workspace-tools"
-      tagline="Nx plugin"
-      subtitle="Generate feature library slices and audit internal workspace dependencies inside standard Nx workflows."
-      primary-href="#installation"
-      primary-label="Install and start"
-      secondary-href="https://github.com/eweap/nx-plugins"
-      secondary-label="Open repository"
-      :meta="['Static', 'Vue + Tailwind', 'GitHub Pages ready']"
-    >
+    <HeroSection v-bind="heroContent">
       <template #aside>
         <div class="panel overflow-hidden">
           <div
@@ -42,16 +39,16 @@ defineProps<{
               <p
                 class="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500 dark:text-slate-400"
               >
-                Quick look
+                {{ quickLookContent.label }}
               </p>
               <p class="mt-1 text-sm text-slate-900 dark:text-slate-100">
-                One generator, one executor, focused on Nx monorepo maintenance.
+                {{ quickLookContent.description }}
               </p>
             </div>
             <span
               class="shrink-0 whitespace-nowrap rounded-full border border-slate-200/70 bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600 dark:border-slate-700/40 dark:bg-slate-800 dark:text-slate-400"
             >
-              v0.0.2-7
+              {{ quickLookContent.version }}
             </span>
           </div>
 
@@ -60,39 +57,17 @@ defineProps<{
               class="grid gap-3 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3"
             >
               <div
+                v-for="stat in quickLookContent.stats"
+                :key="stat.label"
                 class="rounded-2xl border border-slate-200/70 bg-slate-100 p-4 dark:border-slate-700/40 dark:bg-slate-800/80"
               >
                 <p
                   class="text-2xl font-semibold text-slate-900 dark:text-slate-100"
                 >
-                  5
+                  {{ stat.value }}
                 </p>
                 <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">
-                  library types scaffolded
-                </p>
-              </div>
-              <div
-                class="rounded-2xl border border-slate-200/70 bg-slate-100 p-4 dark:border-slate-700/40 dark:bg-slate-800/80"
-              >
-                <p
-                  class="text-2xl font-semibold text-slate-900 dark:text-slate-100"
-                >
-                  Vue
-                </p>
-                <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">
-                  feature and ui libraries supported
-                </p>
-              </div>
-              <div
-                class="rounded-2xl border border-slate-200/70 bg-slate-100 p-4 dark:border-slate-700/40 dark:bg-slate-800/80"
-              >
-                <p
-                  class="text-2xl font-semibold text-slate-900 dark:text-slate-100"
-                >
-                  0
-                </p>
-                <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">
-                  runtime services required
+                  {{ stat.label }}
                 </p>
               </div>
             </div>
@@ -100,7 +75,7 @@ defineProps<{
             <CodeSnippet
               title="Core installation command"
               language="bash"
-              :code="'pnpm add -D @eweap/nx-workspace-tools'"
+              :code="installationCommand"
             />
           </div>
         </div>
@@ -113,9 +88,7 @@ defineProps<{
       <div class="space-y-8">
         <SectionBlock
           id="features"
-          eyebrow="Package overview"
-          title="A small plugin for repetitive Nx work"
-          description="Two jobs: scaffold feature slices and audit internal dependencies."
+          v-bind="sectionContent.features"
         >
           <div class="grid gap-5 md:grid-cols-2">
             <FeatureCard
@@ -130,35 +103,34 @@ defineProps<{
 
         <SectionBlock
           id="installation"
-          eyebrow="Setup"
-          title="Install the plugin in an Nx workspace"
-          description="Examples use pnpm, but the package is a standard Nx plugin dependency."
+          :eyebrow="sectionContent.installation.eyebrow"
+          :title="sectionContent.installation.title"
+          :description="sectionContent.installation.description"
         >
           <div
             class="grid gap-5 xl:grid-cols-[minmax(0,1.15fr)_minmax(18rem,0.85fr)]"
           >
             <CodeSnippet
-              title="Install"
+              :title="sectionContent.installation.installTitle"
               language="bash"
-              :code="'pnpm add -D @eweap/nx-workspace-tools'"
+              :code="installationCommand"
             />
 
             <div class="panel p-6">
               <h3
                 class="text-lg font-semibold text-slate-900 dark:text-slate-100"
               >
-                Prerequisites
+                {{ sectionContent.installation.prerequisitesTitle }}
               </h3>
               <ul
                 class="mt-4 space-y-3 text-sm leading-6 text-slate-600 dark:text-slate-400"
               >
-                <li>Use it inside an Nx workspace.</li>
-                <li>
-                  Examples assume a scoped workspace package name such as
-                  @acme/workspace.
-                </li>
-                <li>
-                  Generator output relies on the Nx Vue and Nx JS plugins.
+                <li
+                  v-for="prerequisite in sectionContent.installation
+                    .prerequisites"
+                  :key="prerequisite"
+                >
+                  {{ prerequisite }}
                 </li>
               </ul>
             </div>
@@ -167,15 +139,15 @@ defineProps<{
 
         <SectionBlock
           id="getting-started"
-          eyebrow="First steps"
-          title="Scaffold a feature slice in one command"
-          description="Start with the full slice, then narrow it with libTypes if needed."
+          :eyebrow="sectionContent.gettingStarted.eyebrow"
+          :title="sectionContent.gettingStarted.title"
+          :description="sectionContent.gettingStarted.description"
         >
           <div
             class="grid gap-5 xl:grid-cols-[minmax(0,1.1fr)_minmax(18rem,0.9fr)]"
           >
             <CodeSnippet
-              title="Minimal flow"
+              :title="sectionContent.gettingStarted.codeTitle"
               language="bash"
               :code="gettingStartedCode"
             />
@@ -184,14 +156,12 @@ defineProps<{
               <h3
                 class="text-lg font-semibold text-slate-900 dark:text-slate-100"
               >
-                What this produces
+                {{ sectionContent.gettingStarted.summaryTitle }}
               </h3>
               <p
                 class="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400"
               >
-                It creates feature, data-access, ui, types, and util libraries
-                under packages/orders. Package names follow the workspace scope,
-                for example @acme/orders and @acme/orders-ui.
+                {{ sectionContent.gettingStarted.summary }}
               </p>
             </div>
           </div>
@@ -199,9 +169,7 @@ defineProps<{
 
         <SectionBlock
           id="usage-examples"
-          eyebrow="Examples"
-          title="Common Nx workflows"
-          description="Examples aligned with the current package surface."
+          v-bind="sectionContent.usageExamples"
         >
           <div class="space-y-5">
             <article
@@ -238,9 +206,7 @@ defineProps<{
 
         <SectionBlock
           id="api-reference"
-          eyebrow="Reference"
-          title="Generators and executors"
-          description="The public API is small, so the reference stays direct."
+          v-bind="sectionContent.apiReference"
         >
           <div class="space-y-5">
             <DocItem
@@ -258,9 +224,7 @@ defineProps<{
 
         <SectionBlock
           id="notes"
-          eyebrow="Notes"
-          title="Operational tips"
-          description="A few deployment and usage details."
+          v-bind="sectionContent.notes"
         >
           <div class="grid gap-5 md:grid-cols-2">
             <div class="panel p-6">
@@ -274,19 +238,18 @@ defineProps<{
               >
                 <div>
                   <dt class="font-semibold text-slate-900 dark:text-slate-100">
-                    Do I need to pass workspacePrefix every time?
+                    {{ faqItems[0].question }}
                   </dt>
                   <dd class="mt-1">
-                    No. It can be inferred from a scoped root package name such
-                    as @acme/workspace.
+                    {{ faqItems[0].answer }}
                   </dd>
                 </div>
                 <div>
                   <dt class="font-semibold text-slate-900 dark:text-slate-100">
-                    Can the executor run in report-only mode?
+                    {{ faqItems[1].question }}
                   </dt>
                   <dd class="mt-1">
-                    Yes. Leave write disabled to run in report mode.
+                    {{ faqItems[1].answer }}
                   </dd>
                 </div>
               </dl>
@@ -296,19 +259,18 @@ defineProps<{
               <h3
                 class="text-lg font-semibold text-slate-900 dark:text-slate-100"
               >
-                Deployment note
+                {{ deploymentContent.title }}
               </h3>
               <p
                 class="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-400"
               >
-                The site is fully static. The Vite build accepts an optional
-                base path for GitHub Pages subpath deployments.
+                {{ deploymentContent.description }}
               </p>
               <CodeSnippet
                 class="mt-5"
-                title="GitHub Pages build"
+                :title="deploymentContent.codeTitle"
                 language="bash"
-                :code="'NX_WEBSITE_BASE_PATH=/nx-plugins/ pnpm nx build website'"
+                :code="deploymentContent.code"
               />
             </div>
           </div>
