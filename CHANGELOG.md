@@ -1,3 +1,46 @@
+## 0.0.2-12 (2026-09-22)
+
+### 🚀 Features
+
+- **nx-cloud:** setup nx cloud workspace
+- **nx-cloud:** setup nx cloud workspace
+- **nx-cloud:** add token configuration
+- **nx-workspace-tools:** Add implementation for executor workspace-internal-deps
+- **nx-workspace-tools:** Add implementation for generator feature-libs
+- **nx-workspace-tools:** replace rg binary use with native node functions
+- **nx-workspace-tools:** Rewrite logic
+- **nx-workspace-tools:** Fix increase testTimeout
+- **nx-workspace-tools:** Fix increase hookTimeout instead of testTimeout
+- **nx-workspace-tools:** Fix increase hookTimeout AND testTimeout
+- **nx-workspace-tools:** Configure publish
+- **nx-workspace-tools:** Use a better command for release preVersionCommand
+- **nx-workspace-tools:** Configure github release
+- **nx-workspace-tools:** remove publishConfig from package.json
+- **nx-workspace-tools:** fix publishConfig access
+- **nx-workspace-tools:** fix publish by adding build as target deps
+- **nx-workspace-tools:** remove NPM_ACCESS_TOKEN to use trusted publisher feature
+- **nx-workspace-tools:** Add documentation
+- **nx-workspace-tools:** add homepage
+- **website:** create empty base with tailwind to create a doc
+- **website:** create website content
+- **workspace:** Add NX AI tools
+
+### 🩹 Fixes
+
+- use peerDependencies for nx package
+- bug causing internal deps executor to not display wich project having unused deps
+- dynamic version for  website
+- **nx-workspace-tools:** add package repository url
+- **workspace:** Fix lint
+- **workspace:** fix pnpm-workspace.yaml
+- **workspace:** fix pnpm-lock.yaml
+- **workspace:** fix package.json
+- **workspace:** fix package.json
+
+### ❤️ Thank You
+
+- Jonathan Bonnefoy
+
 ## 0.0.2-11 (2026-08-29)
 
 ### 🚀 Features
