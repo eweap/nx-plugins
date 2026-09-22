@@ -142,13 +142,13 @@ export const apiEntries: ApiEntry[] = [
           'Import-path scope used for generated packages. When omitted, the generator can infer it from the root package name.',
       },
       {
-        name: 'ressourceNameSingular',
+        name: 'resourceNameSingular',
         type: 'string',
         description: 'Singular resource name used in generated files.',
         required: true,
       },
       {
-        name: 'ressourceNamePlural',
+        name: 'resourceNamePlural',
         type: 'string',
         description:
           'Plural resource name used for project names and package names.',

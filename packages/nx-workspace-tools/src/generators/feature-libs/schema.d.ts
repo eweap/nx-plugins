@@ -8,8 +8,8 @@ export interface FeatureLibsGeneratorSchema {
    * `package.json` using {@link getWorkspacePrefix}.
    */
   workspacePrefix?: string;
-  ressourceNameSingular: string;
-  ressourceNamePlural: string;
+  resourceNameSingular: string;
+  resourceNamePlural: string;
   libTypes: ('feature' | 'data-access' | 'ui' | 'types' | 'util')[];
   /**
    * Whether to create a project.json file for the generated library.

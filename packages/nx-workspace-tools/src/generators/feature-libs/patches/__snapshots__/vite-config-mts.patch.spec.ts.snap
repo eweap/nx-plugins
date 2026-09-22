@@ -6,14 +6,14 @@ import { defineConfig } from 'vite';
 import tailwindcss from '@tailwindcss/vite';
 export default defineConfig(() => ({
   root: __dirname,
-  cacheDir: '../../../node_modules/.vite/libs/my-ressources',
+  cacheDir: '../../../node_modules/.vite/libs/my-resources',
   plugins: [vue(), tailwindcss()],
   // Uncomment this if you are using workers.
   // worker: {
   //  plugins: [],
   // },
   test: {
-    name: 'my-ressources',
+    name: 'my-resources',
     watch: false,
     globals: true,
     environment: 'jsdom',
@@ -34,14 +34,14 @@ exports[`patchViteConfig > should patch the vite config file for lib without com
 import { defineConfig } from 'vite';
 export default defineConfig(() => ({
   root: __dirname,
-  cacheDir: '../../../node_modules/.vite/libs/my-ressources',
+  cacheDir: '../../../node_modules/.vite/libs/my-resources',
   plugins: [vue()],
   // Uncomment this if you are using workers.
   // worker: {
   //  plugins: [],
   // },
   test: {
-    name: 'my-ressources',
+    name: 'my-resources',
     watch: false,
     globals: true,
     environment: 'jsdom',

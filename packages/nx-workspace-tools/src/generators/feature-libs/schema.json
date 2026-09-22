@@ -12,7 +12,7 @@
         "$source": "argv",
         "index": 0
       },
-      "x-prompt": "Where should the library be placed (e.g., libs/my-ressources)?"
+      "x-prompt": "Where should the library be placed (e.g., libs/my-resources)?"
     },
     "workspacePrefix": {
       "type": "string",
@@ -23,7 +23,7 @@
       },
       "x-prompt": "What is the libraries workspace prefix (e.g., @my-org)?"
     },
-    "ressourceNameSingular": {
+    "resourceNameSingular": {
       "type": "string",
       "description": "The singular resource name to use in generated files.",
       "$default": {
@@ -32,7 +32,7 @@
       },
       "x-prompt": "What singular resource name would you like to use?"
     },
-    "ressourceNamePlural": {
+    "resourceNamePlural": {
       "type": "string",
       "description": "The plural resource name to use in generated files.",
       "$default": {
@@ -58,5 +58,5 @@
       "x-prompt": "Should a project.json be created?"
     }
   },
-  "required": ["libsPath", "ressourceNameSingular", "ressourceNamePlural"]
+  "required": ["libsPath", "resourceNameSingular", "resourceNamePlural"]
 }

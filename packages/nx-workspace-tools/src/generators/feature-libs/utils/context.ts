@@ -47,36 +47,36 @@ export function createLibraryContext(
     case 'feature':
       context = {
         projectRoot: `${options.libsPath}/feature`,
-        projectName: options.ressourceNamePlural,
-        packageName: `${workspacePrefix}/${options.ressourceNamePlural}`,
+        projectName: options.resourceNamePlural,
+        packageName: `${workspacePrefix}/${options.resourceNamePlural}`,
       };
       break;
     case 'data-access':
       context = {
         projectRoot: `${options.libsPath}/data-access`,
-        projectName: `${options.ressourceNamePlural}-data-access`,
-        packageName: `${workspacePrefix}/${options.ressourceNamePlural}-data-access`,
+        projectName: `${options.resourceNamePlural}-data-access`,
+        packageName: `${workspacePrefix}/${options.resourceNamePlural}-data-access`,
       };
       break;
     case 'ui':
       context = {
         projectRoot: `${options.libsPath}/ui`,
-        projectName: `${options.ressourceNamePlural}-ui`,
-        packageName: `${workspacePrefix}/${options.ressourceNamePlural}-ui`,
+        projectName: `${options.resourceNamePlural}-ui`,
+        packageName: `${workspacePrefix}/${options.resourceNamePlural}-ui`,
       };
       break;
     case 'types':
       context = {
         projectRoot: `${options.libsPath}/types`,
-        projectName: `${options.ressourceNamePlural}-types`,
-        packageName: `${workspacePrefix}/${options.ressourceNamePlural}-types`,
+        projectName: `${options.resourceNamePlural}-types`,
+        packageName: `${workspacePrefix}/${options.resourceNamePlural}-types`,
       };
       break;
     case 'util':
       context = {
         projectRoot: `${options.libsPath}/util`,
-        projectName: `${options.ressourceNamePlural}-util`,
-        packageName: `${workspacePrefix}/${options.ressourceNamePlural}-util`,
+        projectName: `${options.resourceNamePlural}-util`,
+        packageName: `${workspacePrefix}/${options.resourceNamePlural}-util`,
       };
       break;
     default:

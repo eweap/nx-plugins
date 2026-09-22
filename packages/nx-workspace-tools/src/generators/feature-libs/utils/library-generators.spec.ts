@@ -51,10 +51,10 @@ vi.mock(
 describe('Library generators', () => {
   let tree: Tree;
   const FEATURE_LIBS_GENERATOR_CONFIG = {
-    libsPath: 'libs/my-ressources',
+    libsPath: 'libs/my-resources',
     libTypes: [],
-    ressourceNamePlural: 'my-ressources',
-    ressourceNameSingular: 'my-ressource',
+    resourceNamePlural: 'my-resources',
+    resourceNameSingular: 'my-resource',
     useProjectJson: false,
     workspacePrefix: '@test',
   } satisfies FeatureLibsGeneratorSchema;
@@ -62,8 +62,8 @@ describe('Library generators', () => {
   describe('generateFeatureLib()', () => {
     const CONTEXT: LibraryContext = {
       libTypes: FEATURE_LIBS_GENERATOR_CONFIG.libTypes,
-      packageName: `${FEATURE_LIBS_GENERATOR_CONFIG.workspacePrefix}/${FEATURE_LIBS_GENERATOR_CONFIG.ressourceNamePlural}`,
-      projectName: `${FEATURE_LIBS_GENERATOR_CONFIG.ressourceNamePlural}`,
+      packageName: `${FEATURE_LIBS_GENERATOR_CONFIG.workspacePrefix}/${FEATURE_LIBS_GENERATOR_CONFIG.resourceNamePlural}`,
+      projectName: `${FEATURE_LIBS_GENERATOR_CONFIG.resourceNamePlural}`,
       projectRoot: `${FEATURE_LIBS_GENERATOR_CONFIG.libsPath}/feature`,
       workspacePrefix: FEATURE_LIBS_GENERATOR_CONFIG.workspacePrefix,
       useProjectJson: false,
@@ -106,8 +106,8 @@ describe('Library generators', () => {
   describe('generateDataAccessLib()', () => {
     const CONTEXT: LibraryContext = {
       libTypes: FEATURE_LIBS_GENERATOR_CONFIG.libTypes,
-      packageName: `${FEATURE_LIBS_GENERATOR_CONFIG.workspacePrefix}/${FEATURE_LIBS_GENERATOR_CONFIG.ressourceNamePlural}-data-access`,
-      projectName: `${FEATURE_LIBS_GENERATOR_CONFIG.ressourceNamePlural}-data-access`,
+      packageName: `${FEATURE_LIBS_GENERATOR_CONFIG.workspacePrefix}/${FEATURE_LIBS_GENERATOR_CONFIG.resourceNamePlural}-data-access`,
+      projectName: `${FEATURE_LIBS_GENERATOR_CONFIG.resourceNamePlural}-data-access`,
       projectRoot: `${FEATURE_LIBS_GENERATOR_CONFIG.libsPath}/data-access`,
       workspacePrefix: FEATURE_LIBS_GENERATOR_CONFIG.workspacePrefix,
       useProjectJson: false,
@@ -135,8 +135,8 @@ describe('Library generators', () => {
   describe('generateTypesLib()', () => {
     const CONTEXT: LibraryContext = {
       libTypes: FEATURE_LIBS_GENERATOR_CONFIG.libTypes,
-      packageName: `${FEATURE_LIBS_GENERATOR_CONFIG.workspacePrefix}/${FEATURE_LIBS_GENERATOR_CONFIG.ressourceNamePlural}-types`,
-      projectName: `${FEATURE_LIBS_GENERATOR_CONFIG.ressourceNamePlural}-types`,
+      packageName: `${FEATURE_LIBS_GENERATOR_CONFIG.workspacePrefix}/${FEATURE_LIBS_GENERATOR_CONFIG.resourceNamePlural}-types`,
+      projectName: `${FEATURE_LIBS_GENERATOR_CONFIG.resourceNamePlural}-types`,
       projectRoot: `${FEATURE_LIBS_GENERATOR_CONFIG.libsPath}/types`,
       workspacePrefix: FEATURE_LIBS_GENERATOR_CONFIG.workspacePrefix,
       useProjectJson: false,
@@ -158,8 +158,8 @@ describe('Library generators', () => {
   describe('generateUiLib()', () => {
     const CONTEXT: LibraryContext = {
       libTypes: FEATURE_LIBS_GENERATOR_CONFIG.libTypes,
-      packageName: `${FEATURE_LIBS_GENERATOR_CONFIG.workspacePrefix}/${FEATURE_LIBS_GENERATOR_CONFIG.ressourceNamePlural}-ui`,
-      projectName: `${FEATURE_LIBS_GENERATOR_CONFIG.ressourceNamePlural}-ui`,
+      packageName: `${FEATURE_LIBS_GENERATOR_CONFIG.workspacePrefix}/${FEATURE_LIBS_GENERATOR_CONFIG.resourceNamePlural}-ui`,
+      projectName: `${FEATURE_LIBS_GENERATOR_CONFIG.resourceNamePlural}-ui`,
       projectRoot: `${FEATURE_LIBS_GENERATOR_CONFIG.libsPath}/ui`,
       workspacePrefix: FEATURE_LIBS_GENERATOR_CONFIG.workspacePrefix,
       useProjectJson: false,
@@ -195,8 +195,8 @@ describe('Library generators', () => {
   describe('generateUtilLib()', () => {
     const CONTEXT: LibraryContext = {
       libTypes: FEATURE_LIBS_GENERATOR_CONFIG.libTypes,
-      packageName: `${FEATURE_LIBS_GENERATOR_CONFIG.workspacePrefix}/${FEATURE_LIBS_GENERATOR_CONFIG.ressourceNamePlural}-util`,
-      projectName: `${FEATURE_LIBS_GENERATOR_CONFIG.ressourceNamePlural}-util`,
+      packageName: `${FEATURE_LIBS_GENERATOR_CONFIG.workspacePrefix}/${FEATURE_LIBS_GENERATOR_CONFIG.resourceNamePlural}-util`,
+      projectName: `${FEATURE_LIBS_GENERATOR_CONFIG.resourceNamePlural}-util`,
       projectRoot: `${FEATURE_LIBS_GENERATOR_CONFIG.libsPath}/util`,
       workspacePrefix: FEATURE_LIBS_GENERATOR_CONFIG.workspacePrefix,
       useProjectJson: false,

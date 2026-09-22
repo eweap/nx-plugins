@@ -24,10 +24,10 @@ describe('featureLibsGenerator', () => {
   let tree: Tree;
 
   const options = {
-    libsPath: 'libs/my-ressources',
+    libsPath: 'libs/my-resources',
     libTypes: ['feature', 'data-access', 'ui', 'types', 'util'],
-    ressourceNamePlural: 'my-ressources',
-    ressourceNameSingular: 'my-ressource',
+    resourceNamePlural: 'my-resources',
+    resourceNameSingular: 'my-resource',
     useProjectJson: false,
     workspacePrefix: '@test',
   } satisfies FeatureLibsGeneratorSchema;

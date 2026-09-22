@@ -4,7 +4,7 @@ import { libraryGenerator as vueLibraryGenerator } from '@nx/vue';
 import { BASE_CONTEXT } from './contexts';
 
 export const JS_LIBRARY_GENERATOR_CONFIG = {
-  directory: 'libs/my-ressources',
+  directory: 'libs/my-resources',
   linter: 'eslint',
   name: BASE_CONTEXT.projectName,
   unitTestRunner: 'vitest',
@@ -15,7 +15,7 @@ export const JS_LIBRARY_GENERATOR_CONFIG = {
 } satisfies Parameters<typeof jsLibraryGenerator>[1];
 
 export const VUE_LIBRARY_GENERATOR_CONFIG = {
-  directory: 'libs/my-ressources',
+  directory: 'libs/my-resources',
   bundler: 'none',
   linter: 'eslint',
   name: BASE_CONTEXT.projectName,

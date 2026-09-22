@@ -1,4 +1,4 @@
-<% if(libTypes.includes('data-access')) { %>export * from "<%= workspacePrefix %>/<%= ressourceNamePlural %>-data-access";<% } %>
-<% if(libTypes.includes('types')) { %>export * from "<%= workspacePrefix %>/<%= ressourceNamePlural %>-types";<% } %>
-<% if(libTypes.includes('ui')) { %>export * from "<%= workspacePrefix %>/<%= ressourceNamePlural %>-ui";<% } %>
-<% if(libTypes.includes('util')) { %>export * from "<%= workspacePrefix %>/<%= ressourceNamePlural %>-util";<% } %>
+<% if(libTypes.includes('data-access')) { %>export * from "<%= workspacePrefix %>/<%= resourceNamePlural %>-data-access";<% } %>
+<% if(libTypes.includes('types')) { %>export * from "<%= workspacePrefix %>/<%= resourceNamePlural %>-types";<% } %>
+<% if(libTypes.includes('ui')) { %>export * from "<%= workspacePrefix %>/<%= resourceNamePlural %>-ui";<% } %>
+<% if(libTypes.includes('util')) { %>export * from "<%= workspacePrefix %>/<%= resourceNamePlural %>-util";<% } %>

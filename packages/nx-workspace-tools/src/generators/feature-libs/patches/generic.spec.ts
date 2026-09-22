@@ -23,7 +23,7 @@ describe('runGenericPatch', () => {
     const tree = {} as Tree;
     const context = {
       ...BASE_CONTEXT,
-      projectRoot: 'libs/my-ressources',
+      projectRoot: 'libs/my-resources',
     };
 
     runGenericPatch(tree, context);
