@@ -69,7 +69,7 @@ describe('Library generators', () => {
       useProjectJson: false,
     };
 
-    beforeAll(async () => {
+    beforeEach(async () => {
       tree = createTreeWithEmptyWorkspace();
 
       vi.resetAllMocks();
@@ -113,7 +113,7 @@ describe('Library generators', () => {
       useProjectJson: false,
     };
 
-    beforeAll(async () => {
+    beforeEach(async () => {
       tree = createTreeWithEmptyWorkspace();
 
       vi.resetAllMocks();
@@ -142,7 +142,7 @@ describe('Library generators', () => {
       useProjectJson: false,
     };
 
-    beforeAll(async () => {
+    beforeEach(async () => {
       tree = createTreeWithEmptyWorkspace();
 
       vi.resetAllMocks();
@@ -165,7 +165,7 @@ describe('Library generators', () => {
       useProjectJson: false,
     };
 
-    beforeAll(async () => {
+    beforeEach(async () => {
       tree = createTreeWithEmptyWorkspace();
 
       vi.resetAllMocks();
@@ -202,7 +202,7 @@ describe('Library generators', () => {
       useProjectJson: false,
     };
 
-    beforeAll(async () => {
+    beforeEach(async () => {
       tree = createTreeWithEmptyWorkspace();
 
       vi.resetAllMocks();

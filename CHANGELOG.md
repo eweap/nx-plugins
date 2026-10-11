@@ -29,7 +29,7 @@
 
 - use peerDependencies for nx package
 - bug causing internal deps executor to not display wich project having unused deps
-- dynamic version for  website
+- dynamic version for website
 - **nx-workspace-tools:** add package repository url
 - **workspace:** Fix lint
 - **workspace:** fix pnpm-workspace.yaml

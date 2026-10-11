@@ -30,14 +30,6 @@
       }
     },
     {
-      "plugin": "@nx/vitest",
-      "exclude": ["**/__snapshots__/**"],
-      "options": {
-        "testTargetName": "test",
-        "testMode": "watch"
-      }
-    },
-    {
       "plugin": "@nx/eslint/plugin",
       "options": {
         "targetName": "lint"
@@ -54,6 +46,15 @@
         "typecheckTargetName": "typecheck",
         "buildDepsTargetName": "build-deps",
         "watchDepsTargetName": "watch-deps"
+      }
+    },
+    {
+      "plugin": "@nx/vitest",
+      "exclude": ["**/__snapshots__/**"],
+      "options": {
+        "testTargetName": "test",
+        "ciTargetName": "test-ci",
+        "testMode": "watch"
       }
     },
     {

@@ -5,16 +5,16 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
 
-vi.mock('node:child_process', () => ({
-  spawnSync: vi.fn(),
-}));
-
 import runExecutor, {
   analyzeProjectDependencies,
   getWorkspaceDependencies,
   removeUnusedWorkspaceDependencies,
 } from './internal-deps';
 import { InternalDepsExecutorSchema } from './schema';
+
+vi.mock('node:child_process', () => ({
+  spawnSync: vi.fn(),
+}));
 
 const workspaceRoot = mkdtempSync(join(tmpdir(), 'nx-workspace-tools-'));
 const options: InternalDepsExecutorSchema = {};
@@ -155,8 +155,9 @@ describe('internal-deps executor', () => {
     );
 
     expect(output.success).toBe(true);
-    expect(JSON.parse(readFileSync(join(projectDir, 'package.json'), 'utf8')))
-      .not.toHaveProperty('dependencies');
+    expect(
+      JSON.parse(readFileSync(join(projectDir, 'package.json'), 'utf8')),
+    ).not.toHaveProperty('dependencies');
   });
 
   it('should collect only workspace dependencies declared with a workspace version', () => {
