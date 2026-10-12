@@ -8,7 +8,7 @@ export default defineConfig(() => ({
     watch: false,
     globals: true,
     environment: 'node',
-    setupFiles: ['test-setup.mts'],
+    setupFiles: ['src/test-setup.ts'],
     include: ['{src,tests}/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     exclude: [...configDefaults.exclude, '**/__snapshots__/**'],
     reporters: ['default'],
