@@ -1,0 +1,22 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compileOnSave": false,
+  "files": [],
+  "references": [
+    {
+      "path": "./libs/my-resources/feature"
+    },
+    {
+      "path": "./libs/my-resources/data-access"
+    },
+    {
+      "path": "./libs/my-resources/types"
+    },
+    {
+      "path": "./libs/my-resources/ui"
+    },
+    {
+      "path": "./libs/my-resources/util"
+    }
+  ]
+}

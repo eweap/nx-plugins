@@ -19,6 +19,8 @@ export async function createVueWorkspaceTree(
 ) {
   const tree = createTreeWithEmptyWorkspace();
 
+  tree.delete('.oxfmtrc.json');
+
   // Delete this file to force vueWorkspaceGenerator to create the tsconfig files
   tree.delete('tsconfig.base.json');
 
@@ -29,6 +31,7 @@ export async function createVueWorkspaceTree(
     packageManager: 'pnpm',
     workspaces: true,
     useProjectJson: false,
+    formatter: 'prettier',
     skipInstall: true,
     ...workspaceOptions,
   });

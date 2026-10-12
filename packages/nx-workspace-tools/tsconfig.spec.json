@@ -24,8 +24,10 @@
     "src/**/*.test.jsx",
     "src/**/*.spec.jsx",
     "src/**/*.d.ts",
+    "test-setup.mts",
     "testing/**/*.ts"
   ],
+  "exclude": ["src/**/__snapshots__/**"],
   "references": [
     {
       "path": "./tsconfig.lib.json"

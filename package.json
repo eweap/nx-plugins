@@ -57,6 +57,7 @@
     "verdaccio": "^6.3.2",
     "vite": "^8.0.0",
     "vitest": "~5.0.1",
+    "vitest-directory-snapshot": "^0.7.1",
     "vue-tsc": "^2.2.8"
   },
   "nx": {

@@ -16,7 +16,6 @@ export const JS_LIBRARY_GENERATOR_CONFIG = {
 
 export const VUE_LIBRARY_GENERATOR_CONFIG = {
   directory: 'libs/my-resources',
-  bundler: 'none',
   linter: 'eslint',
   name: BASE_CONTEXT.projectName,
   unitTestRunner: 'vitest',
