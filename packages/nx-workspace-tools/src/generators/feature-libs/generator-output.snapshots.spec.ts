@@ -1,12 +1,14 @@
 import { Tree } from '@nx/devkit';
-import { libraryGenerator as jsLibraryGenerator } from '@nx/js';
-import { libraryGenerator as vueLibraryGenerator } from '@nx/vue';
+import { readdir, rm } from 'node:fs/promises';
+import { join } from 'node:path';
 
 import { withMaterializedTree } from '../../../testing/materialize-tree';
 import { createVueWorkspaceTree } from '../../../testing/vue-workspace';
 import featureLibsGenerator from './feature-libs';
 import { FeatureLibsGeneratorSchema } from './schema';
 import { LibraryType, createLibraryContext } from './utils/context';
+import { installStorybook } from './utils/install-storybook';
+import { generateNxLibrary } from './utils/library-generators';
 
 // v0.7.1 targets Vitest 4's Matchers declaration; mirror Vitest 5's signature locally.
 declare module 'vitest' {
@@ -38,23 +40,30 @@ const options = {
 async function generateRawNxOutput(tree: Tree) {
   for (const libraryType of libraryTypes) {
     const context = createLibraryContext(options, libraryType);
-    const generatorOptions = {
-      directory: context.projectRoot,
-      linter: 'eslint',
-      name: context.projectName,
-      unitTestRunner: 'vitest',
-      importPath: context.packageName,
-      tags: `type:${libraryType}`,
-      addPlugin: true,
-      useProjectJson: context.useProjectJson,
-    } as const;
+    await generateNxLibrary(tree, context, libraryType);
 
     if (libraryType === 'feature' || libraryType === 'ui') {
-      await vueLibraryGenerator(tree, generatorOptions);
-    } else {
-      await jsLibraryGenerator(tree, generatorOptions);
+      await installStorybook(tree, context.projectName);
     }
   }
+}
+
+async function removeTransientNxMetadataFromSnapshots() {
+  const snapshotsDirectory = join(__dirname, '__snapshots__');
+  const snapshots = await readdir(snapshotsDirectory, {
+    withFileTypes: true,
+  });
+
+  await Promise.all(
+    snapshots
+      .filter((snapshot) => snapshot.isDirectory())
+      .map((snapshot) =>
+        rm(join(snapshotsDirectory, snapshot.name, '.nx'), {
+          recursive: true,
+          force: true,
+        }),
+      ),
+  );
 }
 
 describe('feature libs generator directory snapshots', () => {
@@ -66,16 +75,18 @@ describe('feature libs generator directory snapshots', () => {
     finalTree = await createVueWorkspaceTree();
   });
 
-  it('captures raw output from the Nx library generators', async () => {
+  it('captures raw output', async () => {
     await generateRawNxOutput(rawTree);
+    await removeTransientNxMetadataFromSnapshots();
 
     await withMaterializedTree(rawTree, (directory) =>
       expect(directory).toMatchDirSnapshot('nx-generators-raw'),
     );
   });
 
-  it('captures final output from the feature libs generator', async () => {
+  it('captures patched output', async () => {
     await featureLibsGenerator(finalTree, options);
+    await removeTransientNxMetadataFromSnapshots();
 
     await withMaterializedTree(finalTree, (directory) =>
       expect(directory).toMatchDirSnapshot('feature-libs-final'),

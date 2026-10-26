@@ -1,4 +1,4 @@
-import { updateJson, workspaceRoot } from '@nx/devkit';
+import { workspaceRoot } from '@nx/devkit';
 import * as path from 'node:path';
 import { createTreeWithEmptyWorkspace } from 'nx/src/devkit-testing-exports.js';
 
@@ -40,42 +40,6 @@ export async function createVueWorkspaceTree(
     'pnpm-workspace.yaml',
     ['packages:', '  - "apps/*"', '  - "libs/*"'].join('\n'),
   );
-
-  updateJson(tree, 'tsconfig.base.json', (tsConfigBaseJson) => {
-    tsConfigBaseJson.compilerOptions = {
-      composite: true,
-      declaration: true,
-      declarationMap: true,
-      emitDeclarationOnly: true,
-      importHelpers: true,
-      isolatedModules: true,
-      lib: ['es2022'],
-      module: 'nodenext',
-      moduleResolution: 'nodenext',
-      noEmitOnError: true,
-      noFallthroughCasesInSwitch: true,
-      noImplicitOverride: true,
-      noImplicitReturns: true,
-      noUnusedLocals: true,
-      skipLibCheck: true,
-      strict: true,
-      target: 'es2022',
-      customConditions: ['@nx-workspace-tools/source'],
-    };
-
-    return tsConfigBaseJson;
-  });
-
-  updateJson(tree, 'tsconfig.json', (tsConfigJson) => {
-    tsConfigJson = {
-      extends: './tsconfig.base.json',
-      compileOnSave: false,
-      files: [],
-      references: [],
-    };
-
-    return tsConfigJson;
-  });
 
   return tree;
 }

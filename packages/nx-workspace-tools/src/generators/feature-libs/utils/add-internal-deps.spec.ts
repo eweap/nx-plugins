@@ -44,12 +44,13 @@ describe('addInternalDepsToPackageJson', () => {
       tree.read('libs/my-resources/feature/package.json', 'utf-8') as string,
     );
 
-    expect(packageJson.devDependencies).toEqual({
+    expect(packageJson.dependencies).toEqual({
       '@test/my-resources-data-access': 'workspace:*',
       '@test/my-resources-ui': 'workspace:*',
       '@test/my-resources-types': 'workspace:*',
       '@test/my-resources-util': 'workspace:*',
     });
+    expect(packageJson).not.toHaveProperty('devDependencies');
   });
 
   it('should not add the current package as an internal dependency', () => {
@@ -73,6 +74,7 @@ describe('addInternalDepsToPackageJson', () => {
       tree.read('libs/my-resources/feature/package.json', 'utf-8') as string,
     );
 
-    expect(packageJson.devDependencies).toEqual({});
+    expect(packageJson.dependencies).toEqual({});
+    expect(packageJson).not.toHaveProperty('devDependencies');
   });
 });

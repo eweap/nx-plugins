@@ -44,6 +44,17 @@ export function patchCustomRules(input: {
     );
 }
 
+function findDefaultExportArray(
+  sourceFile: ts.SourceFile,
+): ts.ArrayLiteralExpression | undefined {
+  return match(sourceFile, EXPORT_DEFAULT_ARRAY_SELECTOR).find(
+    (node): node is ts.ArrayLiteralExpression =>
+      ts.isArrayLiteralExpression(node) &&
+      ts.isExportAssignment(node.parent) &&
+      !node.parent.isExportEquals,
+  );
+}
+
 function createCustomRulesImportEdit(
   sourceFile: ts.SourceFile,
   content: string,
@@ -107,12 +118,7 @@ function createCustomRulesSpreadEdit(
   sourceFile: ts.SourceFile,
   content: string,
 ): TextEdit | undefined {
-  const exportArray = match(sourceFile, EXPORT_DEFAULT_ARRAY_SELECTOR).find(
-    (node): node is ts.ArrayLiteralExpression =>
-      ts.isArrayLiteralExpression(node) &&
-      ts.isExportAssignment(node.parent) &&
-      !node.parent.isExportEquals,
-  );
+  const exportArray = findDefaultExportArray(sourceFile);
 
   if (!exportArray) {
     return undefined;

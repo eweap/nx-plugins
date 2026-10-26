@@ -1,15 +1,15 @@
-import { Tree, generateFiles } from '@nx/devkit';
+import { Tree, generateFiles, updateJson } from '@nx/devkit';
 import { libraryGenerator as jsLibraryGenerator } from '@nx/js';
 import { libraryGenerator as vueLibraryGenerator } from '@nx/vue';
 import { camelCase } from 'lodash-es';
 import * as path from 'path';
 
-import { runGenericPatch } from '../patches/generic';
+import { patchEslintConfig } from '../patches/eslint-config-mjs.patch';
 import { patchTsConfigSpec } from '../patches/tsconfig-spec-json.patch';
 import { patchViteConfig } from '../patches/vite-config-mts.patch';
 import { FeatureLibsGeneratorSchema } from '../schema';
 import { addInternalDepsToPackageJson } from './add-internal-deps';
-import { createLibraryContext } from './context';
+import { LibraryType, createLibraryContext } from './context';
 import { installStorybook } from './install-storybook';
 import { toUpperSnakeCase } from './string-helpers';
 
@@ -27,27 +27,83 @@ function applyLibFileTemplates(
   );
 }
 
+function setLibraryPlatformToWeb(tree: Tree, projectRoot: string) {
+  for (const configName of ['tsconfig.lib.json', 'tsconfig.spec.json']) {
+    const configPath = path.join(projectRoot, configName);
+
+    if (!tree.exists(configPath)) {
+      continue;
+    }
+
+    updateJson(tree, configPath, (config) => {
+      config.compilerOptions ??= {};
+      config.compilerOptions.module = 'esnext';
+      config.compilerOptions.moduleResolution = 'bundler';
+
+      return config;
+    });
+  }
+}
+
+export async function generateNxLibrary(
+  tree: Tree,
+  context: ReturnType<typeof createLibraryContext>,
+  libraryType: LibraryType,
+) {
+  const generatorOptions = {
+    directory: context.projectRoot,
+    linter: 'eslint',
+    bundler: 'none',
+    name: context.projectName,
+    importPath: context.packageName,
+    tags: `type:${libraryType}`,
+    useProjectJson: context.useProjectJson,
+  } as const;
+
+  switch (libraryType) {
+    case 'feature':
+    case 'ui':
+      await vueLibraryGenerator(tree, {
+        ...generatorOptions,
+        unitTestRunner: 'vitest',
+      });
+      return;
+
+    case 'data-access':
+    case 'util':
+      await jsLibraryGenerator(tree, {
+        ...generatorOptions,
+        unitTestRunner: 'vitest',
+        testEnvironment: 'node',
+      });
+      setLibraryPlatformToWeb(tree, context.projectRoot);
+      return;
+
+    case 'types':
+      await jsLibraryGenerator(tree, {
+        ...generatorOptions,
+        unitTestRunner: 'none',
+      });
+      setLibraryPlatformToWeb(tree, context.projectRoot);
+      return;
+
+    default:
+      throw new Error(`Unsupported library type: ${libraryType}`);
+  }
+}
+
+// feature
 export async function generateFeatureLib(
   tree: Tree,
   options: FeatureLibsGeneratorSchema,
 ) {
   const context = createLibraryContext(options, 'feature');
 
-  await vueLibraryGenerator(tree, {
-    directory: context.projectRoot,
-    linter: 'eslint',
-    name: context.projectName,
-    unitTestRunner: 'vitest',
-    importPath: context.packageName,
-    tags: 'type:feature',
-    addPlugin: true,
-    useProjectJson: context.useProjectJson,
-  });
+  await generateNxLibrary(tree, context, 'feature');
 
   await installStorybook(tree, context.projectName);
 
   // Apply patches
-  runGenericPatch(tree, context);
   patchViteConfig(tree, context, { hasComponents: true });
   patchTsConfigSpec(tree, context);
 
@@ -63,81 +119,54 @@ export async function generateFeatureLib(
   });
 }
 
+// data-access
 export async function generateDataAccessLib(
   tree: Tree,
   options: FeatureLibsGeneratorSchema,
 ) {
   const context = createLibraryContext(options, 'data-access');
 
-  await jsLibraryGenerator(tree, {
-    directory: context.projectRoot,
-    linter: 'eslint',
-    name: context.projectName,
-    unitTestRunner: 'vitest',
-    importPath: context.packageName,
-    tags: 'type:data-access',
-    addPlugin: true,
-    useProjectJson: context.useProjectJson,
-  });
+  await generateNxLibrary(tree, context, 'data-access');
 
   // Apply patches
-  runGenericPatch(tree, context);
+  patchEslintConfig(tree, context);
   patchViteConfig(tree, context, { hasComponents: false });
 
   // Apply file templates
   applyLibFileTemplates(tree, 'data-access', context.projectRoot, {
     ...options,
-    uppercase: toUpperSnakeCase,
   });
 }
 
+// types
 export async function generateTypesLib(
   tree: Tree,
   options: FeatureLibsGeneratorSchema,
 ) {
   const context = createLibraryContext(options, 'types');
 
-  await jsLibraryGenerator(tree, {
-    directory: context.projectRoot,
-    linter: 'eslint',
-    name: context.projectName,
-    unitTestRunner: 'vitest',
-    importPath: context.packageName,
-    tags: 'type:types',
-    addPlugin: true,
-    useProjectJson: context.useProjectJson,
-  });
+  await generateNxLibrary(tree, context, 'types');
 
   // Apply patches
-  runGenericPatch(tree, context);
-
+  patchEslintConfig(tree, context);
   // Apply file templates
   applyLibFileTemplates(tree, 'types', context.projectRoot, {
     ...options,
   });
 }
 
+// ui
 export async function generateUiLib(
   tree: Tree,
   options: FeatureLibsGeneratorSchema,
 ) {
   const context = createLibraryContext(options, 'ui');
 
-  await vueLibraryGenerator(tree, {
-    directory: context.projectRoot,
-    linter: 'eslint',
-    name: context.projectName,
-    unitTestRunner: 'vitest',
-    importPath: context.packageName,
-    tags: 'type:ui',
-    addPlugin: true,
-    useProjectJson: context.useProjectJson,
-  });
+  await generateNxLibrary(tree, context, 'ui');
 
   await installStorybook(tree, context.projectName);
 
   // Apply patches
-  runGenericPatch(tree, context);
   patchViteConfig(tree, context, { hasComponents: true });
   patchTsConfigSpec(tree, context);
 
@@ -148,25 +177,17 @@ export async function generateUiLib(
   });
 }
 
+// util
 export async function generateUtilLib(
   tree: Tree,
   options: FeatureLibsGeneratorSchema,
 ) {
   const context = createLibraryContext(options, 'util');
 
-  await jsLibraryGenerator(tree, {
-    directory: context.projectRoot,
-    linter: 'eslint',
-    name: context.projectName,
-    unitTestRunner: 'vitest',
-    importPath: context.packageName,
-    tags: 'type:util',
-    addPlugin: true,
-    useProjectJson: context.useProjectJson,
-  });
+  await generateNxLibrary(tree, context, 'util');
 
   // Apply patches
-  runGenericPatch(tree, context);
+  patchEslintConfig(tree, context);
   patchViteConfig(tree, context, { hasComponents: false });
 
   // Apply file templates

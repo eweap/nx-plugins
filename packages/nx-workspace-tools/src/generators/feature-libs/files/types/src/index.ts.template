@@ -1,1 +1,1 @@
-export * from "./<%= resourceNameSingular %>";
+export * from './lib/<%= resourceNamePlural %>-types';

@@ -100,7 +100,7 @@ export const sectionContent = {
     codeTitle: 'Minimal flow',
     summaryTitle: 'What this produces',
     summary:
-      'It creates feature, data-access, ui, types, and util libraries under packages/orders. Package names follow the workspace scope, for example @acme/orders and @acme/orders-ui.',
+      'It creates feature, data-access, ui, types, and util libraries under packages/orders. Each library has its own package.json, and Nx infers its project configuration by default. Set useProjectJson to generate explicit project.json files. Package names follow the workspace scope, for example @acme/orders and @acme/orders-ui.',
   },
   usageExamples: {
     eyebrow: 'Examples',
@@ -264,6 +264,7 @@ export const apiEntries: ApiEntry[] = [
     ],
     notes: [
       'Creates package names such as @acme/orders, @acme/orders-data-access, and @acme/orders-ui.',
+      'Each library has a package.json with Nx-inferred project configuration by default; set useProjectJson to generate an explicit project.json.',
       'Feature and ui libraries use @nx/vue and receive Storybook plus config patches.',
       'Data-access, types, and util libraries are generated with @nx/js.',
     ],

@@ -15,7 +15,8 @@ export function addInternalDepsToPackageJson(
   const packageJsonPath = `${projectRoot}/package.json`;
 
   updateJson(tree, packageJsonPath, (pkgJson) => {
-    pkgJson.devDependencies = {};
+    pkgJson.dependencies = {};
+    delete pkgJson.devDependencies;
 
     const selectedLibraryTypes = new Set(libTypes);
 
@@ -23,15 +24,14 @@ export function addInternalDepsToPackageJson(
       selectedLibraryTypes.has('feature') &&
       packageName !== `${workspacePrefix}/${projectName}`
     ) {
-      pkgJson.devDependencies[`${workspacePrefix}/${projectName}`] =
-        'workspace:*';
+      pkgJson.dependencies[`${workspacePrefix}/${projectName}`] = 'workspace:*';
     }
 
     if (
       selectedLibraryTypes.has('data-access') &&
       packageName !== `${workspacePrefix}/${projectName}-data-access`
     ) {
-      pkgJson.devDependencies[`${workspacePrefix}/${projectName}-data-access`] =
+      pkgJson.dependencies[`${workspacePrefix}/${projectName}-data-access`] =
         'workspace:*';
     }
 
@@ -39,7 +39,7 @@ export function addInternalDepsToPackageJson(
       selectedLibraryTypes.has('ui') &&
       packageName !== `${workspacePrefix}/${projectName}-ui`
     ) {
-      pkgJson.devDependencies[`${workspacePrefix}/${projectName}-ui`] =
+      pkgJson.dependencies[`${workspacePrefix}/${projectName}-ui`] =
         'workspace:*';
     }
 
@@ -47,7 +47,7 @@ export function addInternalDepsToPackageJson(
       selectedLibraryTypes.has('types') &&
       packageName !== `${workspacePrefix}/${projectName}-types`
     ) {
-      pkgJson.devDependencies[`${workspacePrefix}/${projectName}-types`] =
+      pkgJson.dependencies[`${workspacePrefix}/${projectName}-types`] =
         'workspace:*';
     }
 
@@ -55,7 +55,7 @@ export function addInternalDepsToPackageJson(
       selectedLibraryTypes.has('util') &&
       packageName !== `${workspacePrefix}/${projectName}-util`
     ) {
-      pkgJson.devDependencies[`${workspacePrefix}/${projectName}-util`] =
+      pkgJson.dependencies[`${workspacePrefix}/${projectName}-util`] =
         'workspace:*';
     }
 

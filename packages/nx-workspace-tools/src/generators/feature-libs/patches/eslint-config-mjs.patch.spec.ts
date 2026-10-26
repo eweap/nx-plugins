@@ -1,31 +1,60 @@
 import { Tree } from '@nx/devkit';
-import { libraryGenerator as vueLibraryGenerator } from '@nx/vue';
+import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 
 import { BASE_CONTEXT } from '../../../../testing/contexts';
-import {
-  JS_LIBRARY_GENERATOR_CONFIG,
-  VUE_LIBRARY_GENERATOR_CONFIG,
-} from '../../../../testing/generator-config';
-import { createVueWorkspaceTree } from '../../../../testing/vue-workspace';
 import { patchEslintConfig } from './eslint-config-mjs.patch';
 
 describe('patchEslintConfig', () => {
   let tree: Tree;
-  const eslintConfigPath = `${VUE_LIBRARY_GENERATOR_CONFIG.directory}/eslint.config.mjs`;
+  const projectRoot = 'libs/my-resources/data-access';
+  const eslintConfigPath = `${projectRoot}/eslint.config.mjs`;
 
-  beforeEach(async () => {
-    tree = await createVueWorkspaceTree();
-    await vueLibraryGenerator(tree, VUE_LIBRARY_GENERATOR_CONFIG);
+  beforeEach(() => {
+    tree = createTreeWithEmptyWorkspace();
+    tree.write(
+      eslintConfigPath,
+      [
+        "import baseConfig from '../../../eslint.config.mjs';",
+        '',
+        'export default [',
+        '  ...baseConfig,',
+        "  { ignores: ['**/out-tsc'] },",
+        '];',
+      ].join('\n'),
+    );
   });
 
-  it('should patch the eslint config file', async () => {
+  it('adds custom rules without changing the base config', () => {
     patchEslintConfig(tree, {
       ...BASE_CONTEXT,
-      projectRoot: JS_LIBRARY_GENERATOR_CONFIG.directory,
+      projectRoot,
     });
 
-    const eslintConfig = tree.read(eslintConfigPath, 'utf-8');
+    expect(tree.read(eslintConfigPath, 'utf-8')).toBe(
+      [
+        "import baseConfig, { customRules } from '../../../eslint.config.mjs';",
+        '',
+        'export default [',
+        '  ...baseConfig,',
+        "  { ignores: ['**/out-tsc'] },",
+        '  ...customRules,',
+        '];',
+      ].join('\n'),
+    );
+  });
 
-    await expect(eslintConfig).toMatchSnapshot();
+  it('does not duplicate the custom rules import or spread', () => {
+    patchEslintConfig(tree, {
+      ...BASE_CONTEXT,
+      projectRoot,
+    });
+    const patchedContent = tree.read(eslintConfigPath, 'utf-8');
+
+    patchEslintConfig(tree, {
+      ...BASE_CONTEXT,
+      projectRoot,
+    });
+
+    expect(tree.read(eslintConfigPath, 'utf-8')).toBe(patchedContent);
   });
 });

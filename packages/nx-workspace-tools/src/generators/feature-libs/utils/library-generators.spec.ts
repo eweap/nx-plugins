@@ -2,16 +2,17 @@ import { Tree } from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
 import { Mock } from 'vitest';
 
-import { runGenericPatch } from '../patches/generic';
+import { patchEslintConfig } from '../patches/eslint-config-mjs.patch';
 import { patchTsConfigSpec } from '../patches/tsconfig-spec-json.patch';
 import { patchViteConfig } from '../patches/vite-config-mts.patch';
 import { FeatureLibsGeneratorSchema } from '../schema';
 import { addInternalDepsToPackageJson } from './add-internal-deps';
-import { LibraryContext } from './context';
+import { LibraryContext, LibraryType } from './context';
 import { installStorybook } from './install-storybook';
 import {
   generateDataAccessLib,
   generateFeatureLib,
+  generateNxLibrary,
   generateTypesLib,
   generateUiLib,
   generateUtilLib,
@@ -27,10 +28,13 @@ vi.mock(import('./install-storybook.js'), async (importOriginal) => ({
   installStorybook: vi.fn(),
 }));
 
-vi.mock(import('../patches/generic.js'), async (importOriginal) => ({
-  ...(await importOriginal()),
-  runGenericPatch: vi.fn(),
-}));
+vi.mock(
+  import('../patches/eslint-config-mjs.patch.js'),
+  async (importOriginal) => ({
+    ...(await importOriginal()),
+    patchEslintConfig: vi.fn(),
+  }),
+);
 
 vi.mock(
   import('../patches/vite-config-mts.patch.js'),
@@ -59,6 +63,27 @@ describe('Library generators', () => {
     workspacePrefix: '@test',
   } satisfies FeatureLibsGeneratorSchema;
 
+  describe('generateNxLibrary()', () => {
+    it('should throw for an unknown library type', async () => {
+      const context: LibraryContext = {
+        libTypes: [],
+        packageName: '@test/my-resources',
+        projectName: 'my-resources',
+        projectRoot: 'libs/my-resources',
+        workspacePrefix: '@test',
+        useProjectJson: false,
+      };
+
+      await expect(
+        generateNxLibrary(
+          createTreeWithEmptyWorkspace(),
+          context,
+          'unknown' as LibraryType,
+        ),
+      ).rejects.toThrow('Unsupported library type: unknown');
+    });
+  });
+
   describe('generateFeatureLib()', () => {
     const CONTEXT: LibraryContext = {
       libTypes: FEATURE_LIBS_GENERATOR_CONFIG.libTypes,
@@ -79,10 +104,6 @@ describe('Library generators', () => {
 
     it('should install storybook', () => {
       expect(installStorybook).toHaveBeenCalledWith(tree, CONTEXT.projectName);
-    });
-
-    it('should apply generic patches', () => {
-      expect(runGenericPatch as Mock).toHaveBeenCalledWith(tree, CONTEXT);
     });
 
     it('should apply vite config patches', () => {
@@ -121,8 +142,8 @@ describe('Library generators', () => {
       await generateDataAccessLib(tree, FEATURE_LIBS_GENERATOR_CONFIG);
     });
 
-    it('should apply generic patches', () => {
-      expect(runGenericPatch as Mock).toHaveBeenCalledWith(tree, CONTEXT);
+    it('should patch the eslint config', () => {
+      expect(patchEslintConfig as Mock).toHaveBeenCalledWith(tree, CONTEXT);
     });
 
     it('should apply vite config patches', () => {
@@ -150,8 +171,8 @@ describe('Library generators', () => {
       await generateTypesLib(tree, FEATURE_LIBS_GENERATOR_CONFIG);
     });
 
-    it('should apply generic patches', () => {
-      expect(runGenericPatch as Mock).toHaveBeenCalledWith(tree, CONTEXT);
+    it('should patch the eslint config', () => {
+      expect(patchEslintConfig as Mock).toHaveBeenCalledWith(tree, CONTEXT);
     });
   });
 
@@ -175,10 +196,6 @@ describe('Library generators', () => {
 
     it('should install storybook', () => {
       expect(installStorybook).toHaveBeenCalledWith(tree, CONTEXT.projectName);
-    });
-
-    it('should apply generic patches', () => {
-      expect(runGenericPatch as Mock).toHaveBeenCalledWith(tree, CONTEXT);
     });
 
     it('should apply vite config patches', () => {
@@ -210,8 +227,8 @@ describe('Library generators', () => {
       await generateUtilLib(tree, FEATURE_LIBS_GENERATOR_CONFIG);
     });
 
-    it('should apply generic patches', () => {
-      expect(runGenericPatch as Mock).toHaveBeenCalledWith(tree, CONTEXT);
+    it('should patch the eslint config', () => {
+      expect(patchEslintConfig as Mock).toHaveBeenCalledWith(tree, CONTEXT);
     });
 
     it('should apply vite config patches', () => {

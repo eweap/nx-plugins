@@ -1,13 +1,11 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`patchViteConfig > should patch the vite config file for lib with components 1`] = `
-"import vue from '@vitejs/plugin-vue';
+"/// <reference types='vitest' />
 import { defineConfig } from 'vite';
-import tailwindcss from '@tailwindcss/vite';
 export default defineConfig(() => ({
   root: import.meta.dirname,
-  cacheDir: '../../../node_modules/.vite/libs/my-resources',
-  plugins: [vue(), tailwindcss()],
+  cacheDir: '../../node_modules/.vite/libs/my-resources',
   // Uncomment this if you are using workers.
   // worker: {
   //  plugins: [],
@@ -30,12 +28,11 @@ export default defineConfig(() => ({
 `;
 
 exports[`patchViteConfig > should patch the vite config file for lib without components 1`] = `
-"import vue from '@vitejs/plugin-vue';
+"/// <reference types='vitest' />
 import { defineConfig } from 'vite';
 export default defineConfig(() => ({
   root: import.meta.dirname,
-  cacheDir: '../../../node_modules/.vite/libs/my-resources',
-  plugins: [vue()],
+  cacheDir: '../../node_modules/.vite/libs/my-resources',
   // Uncomment this if you are using workers.
   // worker: {
   //  plugins: [],

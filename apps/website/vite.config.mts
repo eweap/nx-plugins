@@ -1,4 +1,5 @@
 /// <reference types='vitest' />
+import { nxReadySignal } from '@nx/vite/plugins/nx-ready-signal.plugin';
 import tailwindcss from '@tailwindcss/vite';
 import vue from '@vitejs/plugin-vue';
 import { readFileSync } from 'node:fs';
@@ -39,7 +40,7 @@ export default defineConfig(() => ({
     port: 4300,
     host: 'localhost',
   },
-  plugins: [vue(), tailwindcss()],
+  plugins: [vue(), tailwindcss(), nxReadySignal()],
   // Uncomment this if you are using workers.
   // worker: {
   //  plugins: [],

@@ -44,4 +44,33 @@ describe('patchViteConfig', () => {
 
     await expect(viteConfig).toMatchSnapshot();
   });
+
+  it('should patch the vitest config for JS libraries', () => {
+    tree.delete(vueConfigPath);
+    const vitestConfigPath = `${VUE_LIBRARY_GENERATOR_CONFIG.directory}/vitest.config.mts`;
+    tree.write(
+      vitestConfigPath,
+      `export default defineConfig(() => ({
+  test: {
+    name: 'my-lib',
+    environment: 'node',
+  },
+}));\n`,
+    );
+
+    patchViteConfig(
+      tree,
+      {
+        ...BASE_CONTEXT,
+        projectRoot: VUE_LIBRARY_GENERATOR_CONFIG.directory,
+      },
+      { hasComponents: false },
+    );
+
+    const vitestConfig = tree.read(vitestConfigPath, 'utf-8');
+
+    expect(vitestConfig).toContain("environment: 'node'");
+    expect(vitestConfig).not.toContain("environment: 'jsdom'");
+    expect(vitestConfig).toContain("setupFiles: ['test-setup.ts']");
+  });
 });

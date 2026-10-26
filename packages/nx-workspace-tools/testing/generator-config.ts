@@ -10,9 +10,8 @@ export const JS_LIBRARY_GENERATOR_CONFIG = {
   unitTestRunner: 'vitest',
   importPath: BASE_CONTEXT.packageName,
   tags: 'type:feature',
-  addPlugin: true,
   useProjectJson: false,
-} satisfies Parameters<typeof jsLibraryGenerator>[1];
+} as const satisfies Parameters<typeof jsLibraryGenerator>[1];
 
 export const VUE_LIBRARY_GENERATOR_CONFIG = {
   directory: 'libs/my-resources',
@@ -21,6 +20,5 @@ export const VUE_LIBRARY_GENERATOR_CONFIG = {
   unitTestRunner: 'vitest',
   importPath: BASE_CONTEXT.packageName,
   tags: 'type:feature',
-  addPlugin: true,
   useProjectJson: false,
-} satisfies Parameters<typeof vueLibraryGenerator>[1];
+} as const satisfies Parameters<typeof vueLibraryGenerator>[1];

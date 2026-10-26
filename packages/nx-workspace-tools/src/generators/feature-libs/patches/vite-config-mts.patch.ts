@@ -12,15 +12,10 @@ export function patchTestSetupViteConfig(input: { content: string }) {
   return output;
 }
 
-export function patchCacheDirViteConfig(
-  input: { content: string },
-  context: {
-    projectPath: string;
-  },
-) {
+export function patchTestSetupVitestConfig(input: { content: string }) {
   return input.content.replace(
-    /^\s*cacheDir:\s*['"][^'"]+['"],$/m,
-    `  cacheDir: '../../../node_modules/.vite/${context.projectPath}',`,
+    /(\s+environment:\s+["']node["'],\n)(?!\s*setupFiles:)/,
+    "$1    setupFiles: ['test-setup.ts'],\n",
   );
 }
 
@@ -36,6 +31,22 @@ export function patchNameViteConfig(
 
 export function patchTailwindVitePluginViteConfig(input: { content: string }) {
   let updatedViteConfigContent = input.content;
+  // Leave Nx's config unchanged when it does not declare a plugin list.
+  const pluginsLine = /^([ \t]*)plugins:[ \t]*\[([^\]]*)\],[ \t]*$/m;
+  const pluginsMatch = updatedViteConfigContent.match(pluginsLine);
+
+  if (!pluginsMatch) {
+    return input.content;
+  }
+
+  if (
+    !updatedViteConfigContent.includes("import vue from '@vitejs/plugin-vue';")
+  ) {
+    updatedViteConfigContent = updatedViteConfigContent.replace(
+      /^(?:(?:\/\/\/.*|import .*)\n)+/,
+      (imports) => `${imports}import vue from '@vitejs/plugin-vue';\n`,
+    );
+  }
 
   if (
     !updatedViteConfigContent.includes(
@@ -43,23 +54,27 @@ export function patchTailwindVitePluginViteConfig(input: { content: string }) {
     )
   ) {
     updatedViteConfigContent = updatedViteConfigContent.replace(
-      /^(?:import .*\n)+/,
+      /^(?:(?:\/\/\/.*|import .*)\n)+/,
       (imports) => `${imports}import tailwindcss from '@tailwindcss/vite';\n`,
     );
   }
 
-  updatedViteConfigContent = updatedViteConfigContent.replace(
-    /^\s*plugins:\s*\[(.*)\],$/m,
-    (fullMatch, pluginList: string) => {
-      if (
-        !pluginList.includes('vue()') ||
-        pluginList.includes('tailwindcss()')
-      ) {
-        return fullMatch;
-      }
+  // Keep Vue first and add Tailwind only when missing.
+  const plugins = pluginsMatch[2]
+    .split(',')
+    .map((plugin) => plugin.trim())
+    .filter(Boolean);
 
-      return fullMatch.replace('vue()', 'vue(), tailwindcss()');
-    },
+  if (!plugins.includes('vue()')) {
+    plugins.unshift('vue()');
+  }
+  if (!plugins.includes('tailwindcss()')) {
+    plugins.push('tailwindcss()');
+  }
+
+  updatedViteConfigContent = updatedViteConfigContent.replace(
+    pluginsLine,
+    `${pluginsMatch[1]}plugins: [${plugins.join(', ')}],`,
   );
 
   return updatedViteConfigContent;
@@ -70,11 +85,14 @@ export function patchViteConfig(
   context: LibraryContext,
   options: { hasComponents: boolean },
 ) {
+  const configFileName = tree.exists(`${context.projectRoot}/vite.config.mts`)
+    ? 'vite.config.mts'
+    : 'vitest.config.mts';
+  const isVitestConfig = configFileName === 'vitest.config.mts';
   const patches = [
-    createFilePatch(patchTestSetupViteConfig),
-    createFilePatch(patchCacheDirViteConfig, {
-      projectPath: context.projectRoot,
-    }),
+    createFilePatch(
+      isVitestConfig ? patchTestSetupVitestConfig : patchTestSetupViteConfig,
+    ),
     createFilePatch(patchNameViteConfig, {
       projectName: context.projectName,
     }),
@@ -84,5 +102,5 @@ export function patchViteConfig(
     patches.push(createFilePatch(patchTailwindVitePluginViteConfig));
   }
 
-  patchFile(tree, `${context.projectRoot}/vite.config.mts`, patches);
+  patchFile(tree, `${context.projectRoot}/${configFileName}`, patches);
 }

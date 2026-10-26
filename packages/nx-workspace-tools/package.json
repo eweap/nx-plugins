@@ -33,16 +33,16 @@
     "typescript": "~6.0.3"
   },
   "devDependencies": {
-    "@nx/devkit": "^23.3.0",
-    "@nx/js": "^23.3.0",
-    "@nx/vue": "^23.3.0",
-    "nx": "^23.3.0"
+    "@nx/devkit": "^24.0.1",
+    "@nx/js": "^24.0.1",
+    "@nx/vue": "^24.0.1",
+    "nx": "^24.0.1"
   },
   "peerDependencies": {
-    "@nx/devkit": "^23.0.0",
-    "@nx/js": "^23.0.0",
-    "@nx/vue": "^23.0.0",
-    "nx": "^23.0.0"
+    "@nx/devkit": "^24.0.0",
+    "@nx/js": "^24.0.0",
+    "@nx/vue": "^24.0.0",
+    "nx": "^24.0.0"
   },
   "nx": {
     "name": "nx-workspace-tools",

@@ -1,32 +1,27 @@
-import { Tree, ensurePackage } from '@nx/devkit';
+import { Tree } from '@nx/devkit';
 import { createTreeWithEmptyWorkspace } from '@nx/devkit/testing';
+import { storybookConfigurationGenerator } from '@nx/vue';
 
 import { installStorybook } from './install-storybook';
 
-vi.mock(import('@nx/devkit'), async (importOriginal) => ({
+vi.mock(import('@nx/vue'), async (importOriginal) => ({
   ...(await importOriginal()),
-  ensurePackage: vi.fn(),
+  storybookConfigurationGenerator: vi.fn(),
 }));
 
 describe('installStorybook', () => {
   let tree: Tree;
-  const configurationGenerator = vi.fn();
-
   beforeEach(() => {
     tree = createTreeWithEmptyWorkspace();
 
     vi.resetAllMocks();
-    vi.mocked(ensurePackage).mockReturnValue({
-      configurationGenerator,
-    } as never);
   });
 
   it('should install storybook configuration for project', async () => {
     await installStorybook(tree, 'my-project');
 
-    expect(ensurePackage).toHaveBeenCalledWith('@nx/storybook', '23.3.0');
-    expect(configurationGenerator).toHaveBeenCalledWith(tree, {
-      addPlugin: true,
+    expect(storybookConfigurationGenerator).toHaveBeenCalledWith(tree, {
+      generateStories: false,
       project: 'my-project',
     });
   });

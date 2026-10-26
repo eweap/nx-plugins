@@ -3,6 +3,14 @@ import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 
+function isNxMetadataPath(path: string): boolean {
+  // Tree paths may start with a slash; .nx is relative to the workspace root.
+  const workspaceRelativePath = path.replace(/^[\\/]+/, '');
+  return (
+    workspaceRelativePath === '.nx' || workspaceRelativePath.startsWith('.nx/')
+  );
+}
+
 export async function withMaterializedTree<T>(
   tree: Tree,
   inspect: (directory: string) => T | Promise<T>,
@@ -12,7 +20,7 @@ export async function withMaterializedTree<T>(
   try {
     const filePaths = tree
       .listChanges()
-      .filter(({ type }) => type !== 'DELETE')
+      .filter(({ path, type }) => type !== 'DELETE' && !isNxMetadataPath(path))
       .map(({ path }) => path);
 
     filePaths.sort((left, right) => (left < right ? -1 : left > right ? 1 : 0));
