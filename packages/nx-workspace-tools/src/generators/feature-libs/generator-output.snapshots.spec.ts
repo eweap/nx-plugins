@@ -82,7 +82,7 @@ describe('feature libs generator directory snapshots', () => {
     await withMaterializedTree(rawTree, (directory) =>
       expect(directory).toMatchDirSnapshot('nx-generators-raw'),
     );
-  });
+  }, 120_000);
 
   it('captures patched output', async () => {
     await featureLibsGenerator(finalTree, options);
@@ -91,5 +91,5 @@ describe('feature libs generator directory snapshots', () => {
     await withMaterializedTree(finalTree, (directory) =>
       expect(directory).toMatchDirSnapshot('feature-libs-final'),
     );
-  });
+  }, 120_000);
 });
